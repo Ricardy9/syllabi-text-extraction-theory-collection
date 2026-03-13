@@ -1,24 +1,29 @@
 """
 syllabi_metadata_extraction.py
 
-Extracts structured metadata from syllabi PDFs using docling for text
-extraction and regex heuristics for field inference.
+Extracts structured metadata from syllabi PDFs using pdfplumber for text
+extraction and the Anthropic Claude API for intelligent field inference.
 
 Required packages:
-    pip install docling pandas openpyxl
+    pip install pdfplumber pandas openpyxl anthropic
 """
 
 import re
+import json
 import random
 import logging
 import pandas as pd
 from pathlib import Path
 
-from docling.document_converter import DocumentConverter
+import pdfplumber
+import anthropic
 
 # ---------------------------------------------------------------------------
 # Configuration
 # ---------------------------------------------------------------------------
+
+# Paste your Anthropic API key here, or set via the ANTHROPIC_API_KEY env var
+ANTHROPIC_API_KEY = "your-api-key-here"
 
 SYLLABI_FOLDER    = Path(__file__).parent / "Syllabi to Draw From"
 OUTPUT_XLSX       = Path(__file__).parent / "syllabi_metadata.xlsx"
@@ -26,9 +31,11 @@ OUTPUT_CSV        = Path(__file__).parent / "syllabi_metadata.csv"
 
 DIGITIZERS        = ["Ricardy", "Lila"]
 
-# Characters of extracted text treated as the "first page" for header-zone
-# inference. Keeps bibliography entries out of university / professor inference.
-HEADER_ZONE_CHARS = 2500
+# Claude model used for metadata extraction
+LLM_MODEL         = "claude-haiku-4-5-20251001"
+
+# Characters of extracted text sent to the LLM as context
+LLM_CONTEXT_CHARS = 3000
 
 COLUMNS = [
     "Original name of syllabus PDF",
@@ -59,31 +66,119 @@ PUBLISHER_VETO = {
 logging.basicConfig(level=logging.INFO, format="%(levelname)s | %(message)s")
 log = logging.getLogger(__name__)
 
-# Single converter instance reused across all PDFs
-_converter = DocumentConverter()
-
 
 # ---------------------------------------------------------------------------
-# Docling extraction
+# pdfplumber extraction
 # ---------------------------------------------------------------------------
 
 def extract_text(pdf_path: Path) -> tuple[str, str]:
     """
-    Convert a PDF with docling and return (full_text, header_zone).
+    Extract text from a PDF with pdfplumber and return (full_text, header_zone).
 
-    full_text   — entire document as markdown (preserves heading structure).
-    header_zone — first HEADER_ZONE_CHARS characters, used for sensitive
-                  field inference so bibliography entries are never mistaken
-                  for course metadata.
+    full_text   — entire document text joined across all pages.
+    header_zone — first LLM_CONTEXT_CHARS characters, used as context for
+                  the LLM so bibliography entries are not mistaken for metadata.
     """
-    result    = _converter.convert(str(pdf_path))
-    full_text = result.document.export_to_markdown()
-    header_zone = full_text[:HEADER_ZONE_CHARS]
+    pages = []
+    with pdfplumber.open(pdf_path) as pdf:
+        for page in pdf.pages:
+            text = page.extract_text()
+            if text:
+                pages.append(text)
+    full_text = "\n\n".join(pages)
+    header_zone = full_text[:LLM_CONTEXT_CHARS]
     return full_text, header_zone
 
 
 # ---------------------------------------------------------------------------
-# Plain-text inference helpers
+# LLM-based metadata extraction
+# ---------------------------------------------------------------------------
+
+LLM_SYSTEM_PROMPT = """\
+You are a research assistant helping to catalog academic course syllabi for a
+political theory and political economy collection. Your task is to extract
+structured metadata from syllabus text.
+
+Return ONLY a valid JSON object with exactly these keys:
+  "course_title"  — The official name of the course (string). Do not include
+                    the course number. If ambiguous, prefer the longer, more
+                    descriptive title.
+  "professors"    — Full name(s) of the instructor(s), semicolon-separated
+                    (e.g. "Jane Smith; John Doe"). Do not include titles like
+                    "Professor" or "Dr." Do not include email addresses,
+                    office hours, or any other text.
+  "year"          — The 4-digit calendar year the course was taught (string),
+                    e.g. "2024". If not found, return "".
+  "term"          — One of: "Spring", "Summer", "Fall", "Winter". If not
+                    found, return "".
+  "university"    — The full name of the university or institution where the
+                    course was taught (string), e.g. "Harvard University".
+                    Return only the institution name — no department, no city.
+                    If not found, return "".
+
+Rules:
+- Return ONLY the JSON object, no markdown, no explanation.
+- If a field cannot be determined from the text, return an empty string "".
+- For professors, only include people who are listed as the instructor of
+  record. Do not include guest speakers, book authors, or teaching assistants.
+"""
+
+def extract_metadata_with_llm(
+    header_zone: str,
+    filename: str,
+    filename_year: str,
+    filename_term: str,
+) -> dict | None:
+    """
+    Call the Claude API to extract metadata from syllabus header text.
+    Returns a dict with keys matching COLUMNS, or None on failure.
+    """
+    if not ANTHROPIC_API_KEY or ANTHROPIC_API_KEY == "your-api-key-here":
+        log.warning("ANTHROPIC_API_KEY not set — skipping LLM extraction.")
+        return None
+
+    user_message = f"""\
+Below is text from the first portion of a university course syllabus PDF.
+The PDF filename is: "{filename}"
+{f'The filename suggests the year is {filename_year}.' if filename_year else ''}
+{f'The filename suggests the term is {filename_term}.' if filename_term else ''}
+
+Extract the metadata as instructed and return a JSON object.
+
+--- SYLLABUS TEXT ---
+{header_zone}
+--- END OF TEXT ---
+"""
+
+    try:
+        client = anthropic.Anthropic(api_key=ANTHROPIC_API_KEY)
+        message = client.messages.create(
+            model=LLM_MODEL,
+            max_tokens=512,
+            system=LLM_SYSTEM_PROMPT,
+            messages=[{"role": "user", "content": user_message}],
+        )
+        raw = message.content[0].text.strip()
+        # Strip markdown code fences if the model wraps the JSON
+        raw = re.sub(r"^```[a-z]*\n?", "", raw)
+        raw = re.sub(r"\n?```$", "", raw)
+        data = json.loads(raw)
+        return {
+            "Course Title":                                     data.get("course_title", "").strip(),
+            "Course Professors":                                data.get("professors",    "").strip(),
+            "Year the Course was taught":                       data.get("year",          "").strip(),
+            "Term (Spring, Winter, etc) the Course was Taught": data.get("term",          "").strip(),
+            "University where this course was taught":          data.get("university",    "").strip(),
+        }
+    except json.JSONDecodeError as exc:
+        log.error("  LLM returned invalid JSON for %s: %s", filename, exc)
+    except Exception as exc:
+        log.error("  LLM call failed for %s: %s", filename, exc)
+    return None
+
+
+# ---------------------------------------------------------------------------
+# Regex fallback helpers (used when LLM is unavailable or fails)
 # ---------------------------------------------------------------------------
 
 def _is_publisher(text: str) -> bool:
@@ -92,7 +187,6 @@ def _is_publisher(text: str) -> bool:
 
 
 def infer_year_from_filename(filename: str) -> str:
-    """Extract a 4-digit year from the filename itself."""
     m = re.search(r"\b(19[9]\d|20[0-3]\d)\b", filename)
     return m.group() if m else ""
 
@@ -119,10 +213,6 @@ def infer_term(text: str) -> str:
 
 
 def infer_university(header_zone: str) -> str:
-    """
-    Heuristically extract a university name from the header zone.
-    Rejects publisher-sounding matches.
-    """
     patterns = [
         r"University of [A-Z][A-Za-z\s\-]+",
         r"[A-Z][A-Za-z\s\-]+ University",
@@ -141,24 +231,12 @@ def infer_university(header_zone: str) -> str:
 
 
 def infer_title_from_text(header_zone: str) -> str:
-    """
-    Infer course title from header zone.
-    Prefers an explicit 'Course Title:' label, then the first markdown
-    heading (## / #), then the first substantial capitalised line.
-    """
-    # Explicit label
     m = re.search(
         r"(?:course\s+title|course\s+name)\s*[:\-]\s*(.+)",
         header_zone, re.IGNORECASE,
     )
     if m:
         return m.group(1).strip()
-
-    # First markdown heading (docling preserves these)
-    for line in header_zone.splitlines():
-        stripped = line.lstrip("#").strip()
-        if line.startswith("#") and len(stripped) > 4:
-            return stripped
 
     skip = re.compile(
         r"^(syllabus|course|professor|instructor|spring|fall|winter|summer|"
@@ -176,12 +254,6 @@ def infer_title_from_text(header_zone: str) -> str:
 
 
 def infer_professors_from_text(header_zone: str) -> str:
-    """
-    Look for explicit instructor labels followed by a name in the header zone.
-    Returns a semicolon-separated string.
-    Only matches when a label is present — avoids reading-list author
-    false-positives.
-    """
     pattern = re.compile(
         r"(?:professor|instructor|lecturer|taught by|faculty|prof\.?|"
         r"course\s+(?:instructor|director)|instructor\s+of\s+record)"
@@ -203,6 +275,19 @@ def infer_professors_from_text(header_zone: str) -> str:
     return "; ".join(unique)
 
 
+def regex_fallback(header_zone: str, full_text: str, filename: str) -> dict:
+    """Run all regex heuristics and return a partial metadata dict."""
+    year = infer_year_from_filename(filename) or infer_year(full_text)
+    term = infer_term_from_filename(filename) or infer_term(full_text)
+    return {
+        "Course Title":                                     infer_title_from_text(header_zone),
+        "Course Professors":                                infer_professors_from_text(header_zone),
+        "Year the Course was taught":                       year,
+        "Term (Spring, Winter, etc) the Course was Taught": term,
+        "University where this course was taught":          infer_university(header_zone),
+    }
+
+
 # ---------------------------------------------------------------------------
 # Per-file processing
 # ---------------------------------------------------------------------------
@@ -215,44 +300,46 @@ def process_pdf(pdf_path: Path) -> dict:
     row["Original name of syllabus PDF"]               = filename
     row["Person in charge of digitizing this syllabus"] = random.choice(DIGITIZERS)
 
-    # Seed year/term from filename — often the most reliable source
-    year = infer_year_from_filename(filename)
-    term = infer_term_from_filename(filename)
+    filename_year = infer_year_from_filename(filename)
+    filename_term = infer_term_from_filename(filename)
 
     # ------------------------------------------------------------------
-    # Step 1: Extract text via docling
+    # Step 1: Extract text via pdfplumber
     # ------------------------------------------------------------------
     try:
         full_text, header_zone = extract_text(pdf_path)
         log.info(
-            "  Extracted %d total chars; header zone = %d chars",
+            "  Extracted %d total chars; context window = %d chars",
             len(full_text), len(header_zone),
         )
     except Exception as exc:
-        log.error("  docling failed for %s: %s", filename, exc)
+        log.error("  pdfplumber failed for %s: %s", filename, exc)
         full_text = header_zone = ""
 
     # ------------------------------------------------------------------
-    # Step 2: Infer fields from text
+    # Step 2: LLM extraction (primary), regex fallback (secondary)
     # ------------------------------------------------------------------
-    title   = infer_title_from_text(header_zone)
-    authors = infer_professors_from_text(header_zone)
+    llm_result = extract_metadata_with_llm(
+        header_zone, filename, filename_year, filename_term
+    )
 
-    if not year:
-        year = infer_year(full_text)
-    if not term:
-        term = infer_term(full_text)
-
-    uni = infer_university(header_zone)
+    if llm_result:
+        log.info("  LLM extraction succeeded.")
+        metadata = llm_result
+        # If LLM left year/term blank, try seeding from filename
+        if not metadata["Year the Course was taught"] and filename_year:
+            metadata["Year the Course was taught"] = filename_year
+        if not metadata["Term (Spring, Winter, etc) the Course was Taught"] and filename_term:
+            metadata["Term (Spring, Winter, etc) the Course was Taught"] = filename_term
+    else:
+        log.info("  Falling back to regex heuristics.")
+        metadata = regex_fallback(header_zone, full_text, filename)
 
     # ------------------------------------------------------------------
     # Step 3: Populate row
     # ------------------------------------------------------------------
-    row["Course Title"]                                     = title
-    row["Course Professors"]                                = authors
-    row["Year the Course was taught"]                       = year
-    row["Term (Spring, Winter, etc) the Course was Taught"] = term
-    row["University where this course was taught"]          = uni
+    for key, value in metadata.items():
+        row[key] = value
 
     return row
 
