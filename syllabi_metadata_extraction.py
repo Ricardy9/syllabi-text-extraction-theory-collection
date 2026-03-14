@@ -5,9 +5,10 @@ Extracts structured metadata from syllabi PDFs using pdfplumber for text
 extraction and the Anthropic Claude API for intelligent field inference.
 
 Required packages:
-    pip install pdfplumber pandas openpyxl anthropic
+    pip install pdfplumber pandas openpyxl anthropic python-dotenv python-dotenv
 """
 
+import os
 import re
 import json
 import random
@@ -15,15 +16,20 @@ import logging
 import pandas as pd
 from pathlib import Path
 
+from dotenv import load_dotenv
 import pdfplumber
 import anthropic
+
+# Load variables from .env (in the same directory as this script) into os.environ.
+# Has no effect if .env does not exist or the variable is already set in the shell.
+load_dotenv(Path(__file__).parent / ".env")
 
 # ---------------------------------------------------------------------------
 # Configuration
 # ---------------------------------------------------------------------------
 
-# Paste your Anthropic API key here, or set via the ANTHROPIC_API_KEY env var
-ANTHROPIC_API_KEY = "your-api-key-here"
+# API key is read from the ANTHROPIC_API_KEY environment variable (set in .env).
+ANTHROPIC_API_KEY = os.environ.get("ANTHROPIC_API_KEY", "")
 
 SYLLABI_FOLDER    = Path(__file__).parent / "Syllabi to Draw From"
 OUTPUT_XLSX       = Path(__file__).parent / "syllabi_metadata.xlsx"
@@ -133,8 +139,8 @@ def extract_metadata_with_llm(
     Call the Claude API to extract metadata from syllabus header text.
     Returns a dict with keys matching COLUMNS, or None on failure.
     """
-    if not ANTHROPIC_API_KEY or ANTHROPIC_API_KEY == "your-api-key-here":
-        log.warning("ANTHROPIC_API_KEY not set — skipping LLM extraction.")
+    if not ANTHROPIC_API_KEY:
+        log.warning("ANTHROPIC_API_KEY not set in .env or environment — skipping LLM extraction.")
         return None
 
     user_message = f"""\
