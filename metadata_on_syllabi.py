@@ -1,5 +1,5 @@
 """
-syllabi_metadata_extraction.py
+metadata_on_syllabi.py
 
 Extracts structured metadata from syllabi PDFs using pdfplumber for text
 extraction and the Anthropic Claude API for intelligent field inference.
@@ -32,8 +32,8 @@ load_dotenv(Path(__file__).parent / ".env")
 ANTHROPIC_API_KEY = os.environ.get("ANTHROPIC_API_KEY", "")
 
 SYLLABI_FOLDER    = Path(__file__).parent / "Syllabi to Draw From"
-OUTPUT_XLSX       = Path(__file__).parent / "syllabi_metadata.xlsx"
-OUTPUT_CSV        = Path(__file__).parent / "syllabi_metadata.csv"
+OUTPUT_XLSX       = Path(__file__).parent / "metadata_on_syllabi.xlsx"
+OUTPUT_CSV        = Path(__file__).parent / "metadata_on_syllabi.csv"
 
 DIGITIZERS        = ["Ricardy", "Lila"]
 

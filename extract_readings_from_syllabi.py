@@ -1,5 +1,5 @@
 """
-syllabus_literature_extraction.py
+extract_readings_from_syllabi.py
 
 Reads every PDF in "Syllabi to Draw From", sends the extracted text to Claude
 (via the Anthropic API) to identify and parse bibliographic references, deduplicates
@@ -11,7 +11,7 @@ Required packages:
 
 API key is read from .env in the same directory as this script.
 Course metadata (title, professor, term, year) is read from
-syllabi_metadata.xlsx if it exists (produced by syllabi_metadata_extraction.py).
+metadata_on_syllabi.xlsx if it exists (produced by metadata_on_syllabi.py).
 """
 
 import json
@@ -41,7 +41,7 @@ ANTHROPIC_API_KEY = os.environ.get("ANTHROPIC_API_KEY", "")
 MODEL             = "claude-sonnet-4-6"
 
 SYLLABI_FOLDER    = Path(__file__).parent / "Syllabi to Draw From"
-METADATA_XLSX     = Path(__file__).parent / "syllabi_metadata.xlsx"
+METADATA_XLSX     = Path(__file__).parent / "metadata_on_syllabi.xlsx"
 OUTPUT_XLSX       = Path(__file__).parent / "literature_from_selected_syllabi.xlsx"
 JSON_OUTPUT_DIR   = Path(__file__).parent / "extracted_references"
 
@@ -582,7 +582,7 @@ def load_class_labels(metadata_path: Path) -> dict[str, str]:
     if not metadata_path.exists():
         log.warning(
             "Metadata file not found at %s. "
-            "Run syllabi_metadata_extraction.py first for richer class labels. "
+            "Run metadata_on_syllabi.py first for richer class labels. "
             "Falling back to raw PDF filenames.",
             metadata_path,
         )

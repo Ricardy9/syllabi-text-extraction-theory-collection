@@ -1,5 +1,5 @@
 """
-reading_leaderboard.py
+most_popular_readings.py
 
 Generates a leaderboard of readings that appear across the most syllabi,
 using literature_from_selected_syllabi.xlsx as input.
@@ -11,7 +11,7 @@ import os
 
 # ── Config ────────────────────────────────────────────────────────────────────
 INPUT_FILE  = "literature_from_selected_syllabi.xlsx"
-OUTPUT_FILE = "reading_leaderboard.html"
+OUTPUT_FILE = "most_popular_readings.html"
 TOP_N       = None        # None = no limit
 MIN_SYLLABI = 2           # only include readings that appear in at least this many
 
@@ -26,7 +26,7 @@ author_col  = "Author(s)"
 year_col    = "Year"
 
 # ── Load university lookup from metadata (if available) ───────────────────────
-METADATA_FILE = "syllabi_metadata.xlsx"
+METADATA_FILE = "metadata_on_syllabi.xlsx"
 _univ_map: dict = {}
 _meta_path = os.path.join(script_dir, METADATA_FILE)
 if os.path.exists(_meta_path):

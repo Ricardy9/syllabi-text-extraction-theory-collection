@@ -1,5 +1,5 @@
 """
-newest_readings_leaderboard.py
+newest_readings.py
 
 Generates a leaderboard of the most recently published readings across all
 syllabi, using literature_from_selected_syllabi.xlsx as input.
@@ -12,7 +12,7 @@ import os
 
 # ── Config ────────────────────────────────────────────────────────────────────
 INPUT_FILE  = "literature_from_selected_syllabi.xlsx"
-OUTPUT_FILE = "newest_readings_leaderboard.html"
+OUTPUT_FILE = "newest_readings.html"
 TOP_N       = 50   # how many readings to show
 
 
@@ -26,7 +26,7 @@ year_col   = "Year"
 classes_col = "Class/es where listed on syllabus"
 
 # ── Load university lookup from metadata (if available) ───────────────────────
-METADATA_FILE = "syllabi_metadata.xlsx"
+METADATA_FILE = "metadata_on_syllabi.xlsx"
 _univ_map: dict = {}
 _meta_path = os.path.join(script_dir, METADATA_FILE)
 if os.path.exists(_meta_path):
