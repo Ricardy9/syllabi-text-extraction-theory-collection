@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Newest Readings Leaderboard</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: #f0f4f8;
+      color: #1e293b;
+      min-height: 100vh;
+      padding: 2.5rem 1.5rem;
+    }
+
+    .card {
+      max-width: 900px;
+      margin: 0 auto;
+      background: #ffffff;
+      border-radius: 16px;
+      box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+      padding: 2.5rem 2.5rem 2rem;
+    }
+
+    header {
+      margin-bottom: 2rem;
+      border-bottom: 1px solid #e2e8f0;
+      padding-bottom: 1.25rem;
+    }
+
+    header h1 {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: #0f172a;
+      line-height: 1.3;
+    }
+
+    header p {
+      margin-top: 0.35rem;
+      font-size: 0.875rem;
+      color: #64748b;
+    }
+
+    .row {
+      display: flex;
+      flex-direction: column;
+      gap: 0.15rem;
+      padding: 0.65rem 0;
+      border-bottom: 1px solid #f1f5f9;
+    }
+
+    .row:last-child { border-bottom: none; }
+
+    .author {
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: #475569;
+    }
+
+    .title {
+      font-size: 0.82rem;
+      color: #334155;
+      line-height: 1.35;
+    }
+
+    .syllabi-box {
+      background: #f1f5f9;
+      border-radius: 10px;
+      padding: 1.25rem 1.5rem;
+      margin-bottom: 1rem;
+    }
+
+    .syllabi-box h2 {
+      font-size: 0.8rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: #64748b;
+      margin-bottom: 0.85rem;
+    }
+
+    .syllabi-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+
+    .syllabus-item {
+      display: flex;
+      flex-direction: column;
+      gap: 0.1rem;
+    }
+
+    .syllabus-course {
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: #1e293b;
+      line-height: 1.3;
+    }
+
+    .syllabus-profs {
+      font-size: 0.72rem;
+      color: #475569;
+    }
+
+    .syllabus-meta {
+      font-size: 0.7rem;
+      color: #94a3b8;
+    }
+
+    .syllabus-tag {
+      font-size: 0.72rem;
+      color: #94a3b8;
+      position: relative;
+      cursor: default;
+      width: fit-content;
+    }
+
+    .syllabus-tag .tooltip {
+      display: none;
+      position: absolute;
+      top: calc(100% + 5px);
+      left: 0;
+      z-index: 100;
+      background: #1e293b;
+      color: #f8fafc;
+      font-size: 0.78rem;
+      line-height: 1.5;
+      border-radius: 8px;
+      padding: 0.6rem 0.85rem;
+      width: max-content;
+      max-width: none;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.2);
+      pointer-events: none;
+    }
+
+    .syllabus-tag .tooltip ul {
+      margin: 0;
+      padding-left: 1.1rem;
+    }
+
+    .syllabus-tag .tooltip li {
+      margin: 0.2rem 0;
+    }
+
+    .syllabus-tag .tooltip .univ {
+      display: block;
+      font-size: 0.7rem;
+      color: #94a3b8;
+    }
+
+    .syllabus-tag:hover .tooltip {
+      display: block;
+    }
+
+    footer {
+      margin-top: 1.5rem;
+      font-size: 0.75rem;
+      color: #94a3b8;
+      text-align: right;
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <header>
+      <h1>Most Recently Published Readings</h1>
+      <p>Top 50 readings by publication year, newest first</p>
+    </header>
+
+    <div class="syllabi-box">
+      <h2>Syllabi Analyzed</h2>
+      <div class="syllabi-list">
+
+        <div class="syllabus-item">
+          <span class="syllabus-course">Economía Política</span>
+          <span class='syllabus-profs'>Leopoldo Fergusson</span>
+          <span class='syllabus-meta'>Fall 2026 · Universidad de los Andes</span>
+        </div>
+        <div class="syllabus-item">
+          <span class="syllabus-course">Economic Development: Theory and Evidence</span>
+          <span class='syllabus-profs'>Eliana La Ferrara; Dani Rodrik</span>
+          <span class='syllabus-meta'>Fall 2025 · Harvard University</span>
+        </div>
+        <div class="syllabus-item">
+          <span class="syllabus-course">State Capacity</span>
+          <span class='syllabus-profs'>Luis R. Martinez</span>
+          <span class='syllabus-meta'>Spring 2025 · Emory University</span>
+        </div>
+        <div class="syllabus-item">
+          <span class="syllabus-course">The Logics of Violence: Rebels, Criminal Groups, and the State</span>
+          <span class='syllabus-profs'>Beatriz Magaloni</span>
+          <span class='syllabus-meta'>Fall 2025 · Stanford University</span>
+        </div>
+        <div class="syllabus-item">
+          <span class="syllabus-course">The Political Economy of Development</span>
+          <span class='syllabus-profs'>Chris Blattman; Eduardo Montero</span>
+          <span class='syllabus-meta'>Spring 2023 · University of Chicago</span>
+        </div>
+        <div class="syllabus-item">
+          <span class="syllabus-course">Political Economy and Institutions</span>
+          <span class='syllabus-profs'>Claudio Ferraz</span>
+          <span class='syllabus-meta'>Spring 2021 · University of British Columbia</span>
+        </div>
+        <div class="syllabus-item">
+          <span class="syllabus-course">The Political Underpinnings of Prosperity and Poverty</span>
+          <span class='syllabus-profs'>Leopoldo Fergusson; Pablo Querubín; James A. Robinson</span>
+          <span class='syllabus-meta'>Summer 2020 · Universidad de los Andes</span>
+        </div>
+        <div class="syllabus-item">
+          <span class="syllabus-course">Political Economy of Development</span>
+          <span class='syllabus-profs'>Macartan Humphreys</span>
+          <span class='syllabus-meta'>Fall 2018 · Columbia University</span>
+        </div>
+        <div class="syllabus-item">
+          <span class="syllabus-course">Political Economy of Institutions and Development</span>
+          <span class='syllabus-profs'>Daron Acemoglu; Camilo Garcia-Jimeno</span>
+          <span class='syllabus-meta'>Spring 2017 · Massachusetts Institute of Technology</span>
+        </div>
+        <div class="syllabus-item">
+          <span class="syllabus-course">Topics in Political Economy</span>
+          <span class='syllabus-profs'>Leopoldo Fergusson; Dimitrios Xefteris</span>
+          <span class='syllabus-meta'>Fall · Universitat de Barcelona</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="leaderboard">
+
+        <div class="row">
+          <span class="author">Liu et al. (2026)</span>
+          <span class="title">A Few Bad Apples? Academic Dishonesty, Political Selection, and Institutional Performance in China</span>
+          <span class="syllabus-tag" data-syllabi='[{"name": "Econom\u00eda Pol\u00edtica \u2013 Fergusson \u2013 Fall 2026 \u2013 Universidad de los Andes.pdf", "univ": ""}]'>1 syllabus</span>
+        </div>
+        <div class="row">
+          <span class="author">Motte (2026)</span>
+          <span class="title">Insult Politics in the Age of Social Media</span>
+          <span class="syllabus-tag" data-syllabi='[{"name": "Econom\u00eda Pol\u00edtica \u2013 Fergusson \u2013 Fall 2026 \u2013 Universidad de los Andes.pdf", "univ": ""}]'>1 syllabus</span>
+        </div>
+        <div class="row">
+          <span class="author">Kaur (2025)</span>
+          <span class="title">Do Financial Concerns Make Workers Less Productive?</span>
+          <span class="syllabus-tag" data-syllabi='[{"name": "Economic Development Theory and Evidence \u2013 Ferrara & Rodrik \u2013 Fall 2025 \u2013 Harvard University.pdf", "univ": ""}]'>1 syllabus</span>
+        </div>
+        <div class="row">
+          <span class="author">Le Rossignol et al. (2025)</span>
+          <span class="title">Fallow Lengths and the Structure of Property Rights</span>
+          <span class="syllabus-tag" data-syllabi='[{"name": "Economic Development Theory and Evidence \u2013 Ferrara & Rodrik \u2013 Fall 2025 \u2013 Harvard University.pdf", "univ": ""}]'>1 syllabus</span>
+        </div>
+        <div class="row">
+          <span class="author">Bertoli & Hazlett (2025)</span>
+          <span class="title">Seeing Like a District: Understanding What Close-Election Designs for Leader Characteristics Can and Cannot Tell Us</span>
+          <span class="syllabus-tag" data-syllabi='[{"name": "Econom\u00eda Pol\u00edtica \u2013 Fergusson \u2013 Fall 2026 \u2013 Universidad de los Andes.pdf", "univ": ""}]'>1 syllabus</span>
+        </div>
+        <div class="row">
+          <span class="author">Guerrero Trinidad (2025)</span>
+          <span class="title">Norms That Travel: The Role of Grassroots Institutions on Antisocial Behavior</span>
+          <span class="syllabus-tag" data-syllabi='[{"name": "Econom\u00eda Pol\u00edtica \u2013 Fergusson \u2013 Fall 2026 \u2013 Universidad de los Andes.pdf", "univ": ""}]'>1 syllabus</span>
+        </div>
+        <div class="row">
+          <span class="author">Moscona & Sastry (2025)</span>
+          <span class="title">Inappropriate Technology: Evidence From Global Agriculture</span>
+          <span class="syllabus-tag" data-syllabi='[{"name": "Economic Development Theory and Evidence \u2013 Ferrara & Rodrik \u2013 Fall 2025 \u2013 Harvard University.pdf", "univ": ""}]'>1 syllabus</span>
+        </div>
+        <div class="row">
+          <span class="author">Morales-Arilla & Ibarra (2025)</span>
+          <span class="title">Transparent Corruption: The Effect of Illicit Connections and Trusted References on the Demand for Bureaucratic Intermediation</span>
+          <span class="syllabus-tag" data-syllabi='[{"name": "Econom\u00eda Pol\u00edtica \u2013 Fergusson \u2013 Fall 2026 \u2013 Universidad de los Andes.pdf", "univ": ""}]'>1 syllabus</span>
+        </div>
+        <div class="row">
+          <span class="author">Lane (2025)</span>
+          <span class="title">Manufacturing Revolutions: Industrial Policy and Industrialization in South Korea</span>
+          <span class="syllabus-tag" data-syllabi='[{"name": "Economic Development Theory and Evidence \u2013 Ferrara & Rodrik \u2013 Fall 2025 \u2013 Harvard University.pdf", "univ": ""}, {"name": "Political Economy and Institutions \u2013 Ferraz \u2013 Spring 2021 \u2013 University of British Columbia.pdf", "univ": ""}]'>2 syllabi</span>
+        </div>
+        <div class="row">
+          <span class="author">Favre (2025)</span>
+          <span class="title">Do Far-Right Mayors Affect Environmental Policies? Evidence From Italian Municipalities</span>
+          <span class="syllabus-tag" data-syllabi='[{"name": "Econom\u00eda Pol\u00edtica \u2013 Fergusson \u2013 Fall 2026 \u2013 Universidad de los Andes.pdf", "univ": ""}]'>1 syllabus</span>
+        </div>
+        <div class="row">
+          <span class="author">Chiovelli et al. (2025)</span>
+          <span class="title">Bourbon Reforms and State Capacity in the Spanish Empire</span>
+          <span class="syllabus-tag" data-syllabi='[{"name": "State Capacity \u2013 Martinez \u2013 Spring 2025 \u2013 Emory University.pdf", "univ": ""}, {"name": "The Political Economy of Development \u2013 Blattman & Montero \u2013 Spring 2023 \u2013 University of Chicago.pdf", "univ": ""}, {"name": "Topics in Political Economy \u2013 Fergusson & Xefteris \u2013 Fall \u2013 Universitat de Barcelona.pdf", "univ": ""}]'>3 syllabi</span>
+        </div>
+        <div class="row">
+          <span class="author">Blattman et al. (2025)</span>
+          <span class="title">Gang Rule: Understanding and Countering Criminal Governance</span>
+          <span class="syllabus-tag" data-syllabi='[{"name": "The Logics of Violence Rebels, Criminal Groups, and the State \u2013 Magaloni \u2013 Fall 2025 \u2013 Stanford University.pdf", "univ": ""}, {"name": "The Political Economy of Development \u2013 Blattman & Montero \u2013 Spring 2023 \u2013 University of Chicago.pdf", "univ": ""}]'>2 syllabi</span>
+        </div>
+        <div class="row">
+          <span class="author">Karreth et al. (2025)</span>
+          <span class="title">Civil War Mediation in the Shadow of IGOs: The Path to Comprehensive Peace Agreements</span>
+          <span class="syllabus-tag" data-syllabi='[{"name": "The Logics of Violence Rebels, Criminal Groups, and the State \u2013 Magaloni \u2013 Fall 2025 \u2013 Stanford University", "univ": ""}]'>1 syllabus</span>
+        </div>
+        <div class="row">
+          <span class="author">Rao & Noy (2025)</span>
+          <span class="title">The Business of the Culture War</span>
+          <span class="syllabus-tag" data-syllabi='[{"name": "Econom\u00eda Pol\u00edtica \u2013 Fergusson \u2013 Fall 2026 \u2013 Universidad de los Andes.pdf", "univ": ""}]'>1 syllabus</span>
+        </div>
+        <div class="row">
+          <span class="author">Conley & Kelly (2025)</span>
+          <span class="title">The Standard Errors of Persistence</span>
+          <span class="syllabus-tag" data-syllabi='[{"name": "Economic Development Theory and Evidence \u2013 Ferrara & Rodrik \u2013 Fall 2025 \u2013 Harvard University.pdf", "univ": ""}]'>1 syllabus</span>
+        </div>
+        <div class="row">
+          <span class="author">Ho et al. (2025)</span>
+          <span class="title">Bringing Work Home: Flexible Arrangements as Gateway Jobs for Women in West Bengal</span>
+          <span class="syllabus-tag" data-syllabi='[{"name": "Economic Development Theory and Evidence \u2013 Ferrara & Rodrik \u2013 Fall 2025 \u2013 Harvard University.pdf", "univ": ""}]'>1 syllabus</span>
+        </div>
+        <div class="row">
+          <span class="author">Peveriani & Pardelli (2025)</span>
+          <span class="title">State Capacity, Informality, and Clientelism</span>
+          <span class="syllabus-tag" data-syllabi='[{"name": "Econom\u00eda Pol\u00edtica \u2013 Fergusson \u2013 Fall 2026 \u2013 Universidad de los Andes.pdf", "univ": ""}]'>1 syllabus</span>
+        </div>
+        <div class="row">
+          <span class="author">Gulesci (2025)</span>
+          <span class="title">A Stepping Stone Approach to Norm Transitions</span>
+          <span class="syllabus-tag" data-syllabi='[{"name": "Economic Development Theory and Evidence \u2013 Ferrara & Rodrik \u2013 Fall 2025 \u2013 Harvard University.pdf", "univ": ""}]'>1 syllabus</span>
+        </div>
+        <div class="row">
+          <span class="author">Sardoschau & Casanueva-Artis (2025)</span>
+          <span class="title">The Cost of Tolerating Intolerance: Right-Wing Protest and Hate Crimes</span>
+          <span class="syllabus-tag" data-syllabi='[{"name": "Econom\u00eda Pol\u00edtica \u2013 Fergusson \u2013 Fall 2026 \u2013 Universidad de los Andes.pdf", "univ": ""}]'>1 syllabus</span>
+        </div>
+        <div class="row">
+          <span class="author">Abadie et al. (2025)</span>
+          <span class="title">Harvesting Differences-in-Differences and Event-Study Evidence</span>
+          <span class="syllabus-tag" data-syllabi='[{"name": "Econom\u00eda Pol\u00edtica \u2013 Fergusson \u2013 Fall 2026 \u2013 Universidad de los Andes.pdf", "univ": ""}]'>1 syllabus</span>
+        </div>
+        <div class="row">
+          <span class="author">Parra & Shibuya (2025)</span>
+          <span class="title">When Protection Fails: Military Bases and Sexual Violence in Colombia</span>
+          <span class="syllabus-tag" data-syllabi='[{"name": "Econom\u00eda Pol\u00edtica \u2013 Fergusson \u2013 Fall 2026 \u2013 Universidad de los Andes.pdf", "univ": ""}]'>1 syllabus</span>
+        </div>
+        <div class="row">
+          <span class="author">Fisman et al. (2024)</span>
+          <span class="title">Corruption as a Shared Dilemma: Survey Evidence From Legislators and Citizens in Three Countries</span>
+          <span class="syllabus-tag" data-syllabi='[{"name": "Econom\u00eda Pol\u00edtica \u2013 Fergusson \u2013 Fall 2026 \u2013 Universidad de los Andes.pdf", "univ": ""}]'>1 syllabus</span>
+        </div>
+        <div class="row">
+          <span class="author">Gailmard (2024)</span>
+          <span class="title">Agents of Empire: English Imperial Governance and the Making of American Political Institutions</span>
+          <span class="syllabus-tag" data-syllabi='[{"name": "State Capacity \u2013 Martinez \u2013 Spring 2025 \u2013 Emory University.pdf", "univ": ""}]'>1 syllabus</span>
+        </div>
+        <div class="row">
+          <span class="author">Blair et al. (2024)</span>
+          <span class="title">The Point of Attack: When and Why Does Oil Cause Armed Conflict in Africa?</span>
+          <span class="syllabus-tag" data-syllabi='[{"name": "The Logics of Violence Rebels, Criminal Groups, and the State \u2013 Magaloni \u2013 Fall 2025 \u2013 Stanford University.pdf", "univ": ""}]'>1 syllabus</span>
+        </div>
+        <div class="row">
+          <span class="author">Bowles (2024)</span>
+          <span class="title">Identifying the Rich: Registration, Taxation, and Access to the State in Tanzania</span>
+          <span class="syllabus-tag" data-syllabi='[{"name": "State Capacity \u2013 Martinez \u2013 Spring 2025 \u2013 Emory University.pdf", "univ": ""}]'>1 syllabus</span>
+        </div>
+        <div class="row">
+          <span class="author">Garfias & Sellars (2024)</span>
+          <span class="title">Fiscal Legibility and State Development: Theory and Evidence From Colonial Mexico</span>
+          <span class="syllabus-tag" data-syllabi='[{"name": "State Capacity \u2013 Martinez \u2013 Spring 2025 \u2013 Emory University.pdf", "univ": ""}]'>1 syllabus</span>
+        </div>
+        <div class="row">
+          <span class="author">Cantoni et al. (2024)</span>
+          <span class="title">The Rise of Fiscal Capacity: Administration and State Consolidation in the Holy Roman Empire</span>
+          <span class="syllabus-tag" data-syllabi='[{"name": "State Capacity \u2013 Martinez \u2013 Spring 2025 \u2013 Emory University.pdf", "univ": ""}]'>1 syllabus</span>
+        </div>
+        <div class="row">
+          <span class="author">Dahis et al. (2024)</span>
+          <span class="title">Selecting Top Bureaucrats: Admission Exams and Performance in Brazil</span>
+          <span class="syllabus-tag" data-syllabi='[{"name": "State Capacity \u2013 Martinez \u2013 Spring 2025 \u2013 Emory University.pdf", "univ": ""}]'>1 syllabus</span>
+        </div>
+        <div class="row">
+          <span class="author">Rodrik & Sandhu (2024)</span>
+          <span class="title">Servicing Development: Productive Upgrading of Labor-Absorbing Services in Developing Economies</span>
+          <span class="syllabus-tag" data-syllabi='[{"name": "Economic Development Theory and Evidence \u2013 Ferrara & Rodrik \u2013 Fall 2025 \u2013 Harvard University.pdf", "univ": ""}]'>1 syllabus</span>
+        </div>
+        <div class="row">
+          <span class="author">Fergusson et al. (2024)</span>
+          <span class="title">The Interaction of Economic and Political Inequality in Latin America</span>
+          <span class="syllabus-tag" data-syllabi='[{"name": "Econom\u00eda Pol\u00edtica \u2013 Fergusson \u2013 Fall 2026 \u2013 Universidad de los Andes.pdf", "univ": ""}]'>1 syllabus</span>
+        </div>
+        <div class="row">
+          <span class="author">Bau et al. (2024)</span>
+          <span class="title">Family Planning, Now and Later: Infertility Fears and Contraceptive Take-Up</span>
+          <span class="syllabus-tag" data-syllabi='[{"name": "Economic Development Theory and Evidence \u2013 Ferrara & Rodrik \u2013 Fall 2025 \u2013 Harvard University.pdf", "univ": ""}]'>1 syllabus</span>
+        </div>
+        <div class="row">
+          <span class="author">Marshall (2024)</span>
+          <span class="title">Can Close Election Regression Discontinuity Designs Identify Effects of Winning Politician Characteristics?</span>
+          <span class="syllabus-tag" data-syllabi='[{"name": "Econom\u00eda Pol\u00edtica \u2013 Fergusson \u2013 Fall 2026 \u2013 Universidad de los Andes.pdf", "univ": ""}]'>1 syllabus</span>
+        </div>
+        <div class="row">
+          <span class="author">Juhasz et al. (2024)</span>
+          <span class="title">The New Economics of Industrial Policy</span>
+          <span class="syllabus-tag" data-syllabi='[{"name": "Economic Development Theory and Evidence \u2013 Ferrara & Rodrik \u2013 Fall 2025 \u2013 Harvard University.pdf", "univ": ""}]'>1 syllabus</span>
+        </div>
+        <div class="row">
+          <span class="author">Moreira & Perez (2024)</span>
+          <span class="title">Civil Service Exams and Organizational Performance: Evidence From the Pendleton Act</span>
+          <span class="syllabus-tag" data-syllabi='[{"name": "State Capacity \u2013 Martinez \u2013 Spring 2025 \u2013 Emory University.pdf", "univ": ""}]'>1 syllabus</span>
+        </div>
+        <div class="row">
+          <span class="author">Riley (2024)</span>
+          <span class="title">Role Models in Movies: The Impact of Queen of Katwe on Students' Educational Attainment</span>
+          <span class="syllabus-tag" data-syllabi='[{"name": "Economic Development Theory and Evidence \u2013 Ferrara & Rodrik \u2013 Fall 2025 \u2013 Harvard University.pdf", "univ": ""}]'>1 syllabus</span>
+        </div>
+        <div class="row">
+          <span class="author">Unknown (2024)</span>
+          <span class="title">How WW1 Battle Deaths Fueled Civilians' Support for the Nazi Party</span>
+          <span class="syllabus-tag" data-syllabi='[{"name": "The Logics of Violence Rebels, Criminal Groups, and the State \u2013 Magaloni \u2013 Fall 2025 \u2013 Stanford University.pdf", "univ": ""}]'>1 syllabus</span>
+        </div>
+        <div class="row">
+          <span class="author">Martinez et al. (2024)</span>
+          <span class="title">The Anatomy of Colombian Bureaucratic Hierarchies</span>
+          <span class="syllabus-tag" data-syllabi='[{"name": "State Capacity \u2013 Martinez \u2013 Spring 2025 \u2013 Emory University.pdf", "univ": ""}]'>1 syllabus</span>
+        </div>
+        <div class="row">
+          <span class="author">Qin et al. (2024)</span>
+          <span class="title">Social Media and Collective Action in China</span>
+          <span class="syllabus-tag" data-syllabi='[{"name": "Econom\u00eda Pol\u00edtica \u2013 Fergusson \u2013 Fall 2026 \u2013 Universidad de los Andes.pdf", "univ": ""}]'>1 syllabus</span>
+        </div>
+        <div class="row">
+          <span class="author">Aneja & Xu (2024)</span>
+          <span class="title">Strengthening State Capacity: Civil Service Reform and Public Sector Performance During the Gilded Age</span>
+          <span class="syllabus-tag" data-syllabi='[{"name": "State Capacity \u2013 Martinez \u2013 Spring 2025 \u2013 Emory University.pdf", "univ": ""}]'>1 syllabus</span>
+        </div>
+        <div class="row">
+          <span class="author">Diaz-Bonilla (2024)</span>
+          <span class="title">April 2024 Update to the Multidimensional Poverty Measure: What's New</span>
+          <span class="syllabus-tag" data-syllabi='[{"name": "Economic Development Theory and Evidence \u2013 Ferrara & Rodrik \u2013 Fall 2025 \u2013 Harvard University.pdf", "univ": ""}]'>1 syllabus</span>
+        </div>
+        <div class="row">
+          <span class="author">Chen et al. (2024)</span>
+          <span class="title">From Powerholders to Stakeholders: State-Building With Elite Compensation in Early Medieval China</span>
+          <span class="syllabus-tag" data-syllabi='[{"name": "State Capacity \u2013 Martinez \u2013 Spring 2025 \u2013 Emory University.pdf", "univ": ""}]'>1 syllabus</span>
+        </div>
+        <div class="row">
+          <span class="author">Buchmann et al. (2023)</span>
+          <span class="title">A Signal to End Child Marriage: Theory and Experimental Evidence From Bangladesh</span>
+          <span class="syllabus-tag" data-syllabi='[{"name": "Economic Development Theory and Evidence \u2013 Ferrara & Rodrik \u2013 Fall 2025 \u2013 Harvard University.pdf", "univ": ""}]'>1 syllabus</span>
+        </div>
+        <div class="row">
+          <span class="author">Spenkuch et al. (2023)</span>
+          <span class="title">Ideology and Performance in Public Organizations</span>
+          <span class="syllabus-tag" data-syllabi='[{"name": "State Capacity \u2013 Martinez \u2013 Spring 2025 \u2013 Emory University.pdf", "univ": ""}]'>1 syllabus</span>
+        </div>
+        <div class="row">
+          <span class="author">Fentanes & Levy (2023)</span>
+          <span class="title">NAFTA, Dysfunctional Firm Dynamics, and Mexico's Dismal Productivity Performance</span>
+          <span class="syllabus-tag" data-syllabi='[{"name": "Economic Development Theory and Evidence \u2013 Ferrara & Rodrik \u2013 Fall 2025 \u2013 Harvard University.pdf", "univ": ""}]'>1 syllabus</span>
+        </div>
+        <div class="row">
+          <span class="author">Jensen et al. (2023)</span>
+          <span class="title">When Do Elites Support Increasing Taxation? Evidence From the American South</span>
+          <span class="syllabus-tag" data-syllabi='[{"name": "State Capacity \u2013 Martinez \u2013 Spring 2025 \u2013 Emory University.pdf", "univ": ""}]'>1 syllabus</span>
+        </div>
+        <div class="row">
+          <span class="author">Fergusson et al. (2023)</span>
+          <span class="title">Birds of a Feather Collude Together: Subnational Alignment and Corruption</span>
+          <span class="syllabus-tag" data-syllabi='[{"name": "Econom\u00eda Pol\u00edtica \u2013 Fergusson \u2013 Fall 2026 \u2013 Universidad de los Andes.pdf", "univ": ""}]'>1 syllabus</span>
+        </div>
+        <div class="row">
+          <span class="author">McGuirk et al. (2023)</span>
+          <span class="title">No Kin in the Game: Moral Hazard and War in the U.S. Congress</span>
+          <span class="syllabus-tag" data-syllabi='[{"name": "The Political Economy of Development \u2013 Blattman & Montero \u2013 Spring 2023 \u2013 University of Chicago.pdf", "univ": ""}]'>1 syllabus</span>
+        </div>
+        <div class="row">
+          <span class="author">Best et al. (2023)</span>
+          <span class="title">Individuals and Organizations as Sources of State Effectiveness</span>
+          <span class="syllabus-tag" data-syllabi='[{"name": "State Capacity \u2013 Martinez \u2013 Spring 2025 \u2013 Emory University.pdf", "univ": ""}]'>1 syllabus</span>
+        </div>
+        <div class="row">
+          <span class="author">Chalendard et al. (2023)</span>
+          <span class="title">Corruption in Customs</span>
+          <span class="syllabus-tag" data-syllabi='[{"name": "The Political Economy of Development \u2013 Blattman & Montero \u2013 Spring 2023 \u2013 University of Chicago.pdf", "univ": ""}]'>1 syllabus</span>
+        </div>
+        <div class="row">
+          <span class="author">Sanchez de la Sierra (2023)</span>
+          <span class="title">Corrupt Hierarchies</span>
+          <span class="syllabus-tag" data-syllabi='[{"name": "The Political Economy of Development \u2013 Blattman & Montero \u2013 Spring 2023 \u2013 University of Chicago.pdf", "univ": ""}]'>1 syllabus</span>
+        </div>
+    </div>
+
+    <footer>Generated from literature_from_selected_syllabi.xlsx</footer>
+  </div>
+  <script>
+    document.querySelectorAll('.syllabus-tag[data-syllabi]').forEach(tag => {
+      const syllabi = JSON.parse(tag.dataset.syllabi);
+      if (!syllabi.length) return;
+      const tip = document.createElement('div');
+      tip.className = 'tooltip';
+      const items = syllabi.map(s =>
+        `${s.name}${s.univ ? `<span class="univ">${s.univ}</span>` : ''}`
+      );
+      tip.innerHTML = syllabi.length > 1
+        ? '<ul>' + items.map(i => `<li>${i}</li>`).join('') + '</ul>'
+        : items[0];
+      tag.appendChild(tip);
+    });
+  </script>
+</body>
+</html>

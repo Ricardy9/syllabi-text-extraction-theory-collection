@@ -1,0 +1,398 @@
+
+(venv) (base) lilamack@MacBook-Pro-99 Syllabi Text Extraction for Theory Collection % python "syllabus_literature_extraction_claude.py"
+
+INFO | Found 11 PDF(s) in '/Users/lilamack/Desktop/Projects/Syllabi Text Extraction for Theory Collection/Syllabi to Draw From'
+INFO | Processing: Economic Development Theory and Evidence – Ferrara & Rodrik – Fall 2025.pdf  →  class label: Economic Development: Theory and Evidence – Ferrara & Rodrik – Fall 2025
+INFO |   Sending 40140 characters to Claude…
+INFO | HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+ERROR |   Claude returned invalid JSON for Economic Development Theory and Evidence – Ferrara & Rodrik – Fall 2025.pdf (Unterminated string starting at: line 513 column 26 (char 24549)). Raw output (first 500 chars):
+[
+  {
+    "original_citation": "Angrist, Joshua D., and Jörn-Steffen Pischke. 2014. Mastering'metrics: The path from cause to effect, Princeton University Press, (selected chapters).",
+    "authors": "Angrist, Joshua D.; Pischke, Jörn-Steffen",
+    "year": "2014",
+    "title": "Mastering'metrics: The path from cause to effect",
+    "journal": "Princeton University Press",
+    "issue_pages": "",
+    "link": "",
+    "source_type": "Book"
+  },
+  {
+    "original_citation": "Athey, Susan, and Guido W
+INFO | Processing: Economía Política – Fergusson – 2026.pdf  →  class label: Economía Política – Fergusson – 2026.pdf
+INFO |   Sending 54520 characters to Claude…
+INFO | HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+ERROR |   Claude returned invalid JSON for Economía Política – Fergusson – 2026.pdf (Unterminated string starting at: line 423 column 26 (char 22920)). Raw output (first 500 chars):
+[
+  {
+    "original_citation": "Leopoldo Fergusson and Pablo Querubín. Economía política de la política económica. Ediciones Uniandes, Bogotá, 2018. Facultad de Economía, Universidad de los Andes (Capítulo 1)",
+    "authors": "Leopoldo Fergusson; Pablo Querubín",
+    "year": "2018",
+    "title": "Economía política de la política económica",
+    "journal": "Ediciones Uniandes",
+    "issue_pages": "Capítulo 1",
+    "link": "",
+    "source_type": "Book Chapter"
+  },
+  {
+    "original_citation": "Jo
+INFO | Processing: Political Economy and Institutions – Ferraz – Spring 2021.pdf  →  class label: Political Economy and Institutions – Ferraz – Spring 2021
+INFO |   Sending 35480 characters to Claude…
+INFO | HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+ERROR |   Claude returned invalid JSON for Political Economy and Institutions – Ferraz – Spring 2021.pdf (Unterminated string starting at: line 503 column 26 (char 24853)). Raw output (first 500 chars):
+[
+  {
+    "original_citation": "Adam Przeworski, Michael E. Alvarez, José Antonio Cheibub, and Fernando Limongi. Democracy and Development: Political Institutions and Well-Being in the World, 1950-1990, pp. 13-30, 33-36. New York: Cambridge University Press, 2000.",
+    "authors": "Adam Przeworski; Michael E. Alvarez; José Antonio Cheibub; Fernando Limongi",
+    "year": "2000",
+    "title": "Democracy and Development: Political Institutions and Well-Being in the World, 1950-1990",
+    "journal":
+INFO | Processing: Political Economy of Development – Humphreys – Fall 2018.pdf  →  class label: Political Economy of Development – Humphreys – Fall 2018
+INFO |   Sending 24426 characters to Claude…
+INFO | HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+ERROR |   Claude returned invalid JSON for Political Economy of Development – Humphreys – Fall 2018.pdf (Unterminated string starting at: line 440 column 20 (char 23872)). Raw output (first 500 chars):
+[
+  {
+    "original_citation": "Daron Acemoglu. Introduction to modern economic growth. Princeton University Press, 2008. URL http://assets.press.princeton.edu/chapters/s8764.pdf Ch 1. In addition useful to survey Ch 2 and Ch 22 parts 22.1 to 22.6 (not online) alongside lecture notes.",
+    "authors": "Acemoglu Daron",
+    "year": "2008",
+    "title": "Introduction to modern economic growth",
+    "journal": "Princeton University Press",
+    "issue_pages": "Ch 1, Ch 2, Ch 22 parts 22.1 to 22.6",
+
+INFO | Processing: Political Economy of Institutions and Development – Acemoglu & Garcia-Jimeno – Spring 2017.pdf  →  class label: Political Economy of Institutions and Development – Acemoglu & Garcia-Jimeno – Spring 2017
+INFO |   Sending 36977 characters to Claude…
+INFO | HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+ERROR |   Claude returned invalid JSON for Political Economy of Institutions and Development – Acemoglu & Garcia-Jimeno – Spring 2017.pdf (Unterminated string starting at: line 540 column 5 (char 24458)). Raw output (first 500 chars):
+[
+  {
+    "original_citation": "Acemoglu, Daron, Johnson, Simon and Robinson, James (2006) \"Institutions as a Fundamental Cause of Long-Run Growth\" in Handbook of Economic Growth, Aghion, Philippe and Durlauf, Steven, eds. Amsterdam; North-Holland.",
+    "authors": "Acemoglu, Daron; Johnson, Simon; Robinson, James",
+    "year": "2006",
+    "title": "Institutions as a Fundamental Cause of Long-Run Growth",
+    "journal": "Handbook of Economic Growth",
+    "issue_pages": "",
+    "link": "",
+    
+INFO | Processing: Principles of Political Science – Martinez – Spring 2025.pdf  →  class label: Principles of Political Science – Martinez – Spring 2025
+INFO |   Sending 15070 characters to Claude…
+INFO | HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+INFO |   Claude extracted 0 reference(s).
+INFO | Processing: State Capacity – Martinez – Spring 2025.pdf  →  class label: State Capacity – Martinez – Spring 2025
+INFO |   Sending 14736 characters to Claude…
+INFO | HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+ERROR |   Claude returned invalid JSON for State Capacity – Martinez – Spring 2025.pdf (Unterminated string starting at: line 516 column 14 (char 25869)). Raw output (first 500 chars):
+[
+  {
+    "original_citation": "Tilly, Charles (1985). \"War Making and State Making as Organized Crime\" in Bringing the State Back In (edited by P.B. Evans, D. Rueschemeyer, and T. Skocpol). Cambridge University Press.",
+    "authors": "Tilly, Charles",
+    "year": "1985",
+    "title": "War Making and State Making as Organized Crime",
+    "journal": "Bringing the State Back In",
+    "issue_pages": "",
+    "link": "",
+    "source_type": "Book Chapter"
+  },
+  {
+    "original_citation": "Mann, Mi
+INFO | Processing: The Logics of Violence Rebels, Criminal Groups, and the State – Magaloni – Fall 2025.pdf  →  class label: The Logics of Violence: Rebels, Criminal Groups, and the State – Magaloni – Fall 2025
+INFO |   Sending 19067 characters to Claude…
+INFO | HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+ERROR |   Claude returned invalid JSON for The Logics of Violence Rebels, Criminal Groups, and the State – Magaloni – Fall 2025.pdf (Unterminated string starting at: line 508 column 20 (char 24610)). Raw output (first 500 chars):
+[
+  {
+    "original_citation": "Fearon, James D., and David D. Laitin. \"Ethnicity, insurgency, and civil war.\" American Political Science Review 97, no. 01 (2003): 75-90.",
+    "authors": "Fearon, James D.; Laitin, David D.",
+    "year": "2003",
+    "title": "Ethnicity, insurgency, and civil war",
+    "journal": "American Political Science Review",
+    "issue_pages": "Vol. 97, No. 01, pp. 75-90",
+    "link": "",
+    "source_type": "Journal Article"
+  },
+  {
+    "original_citation": "Cederman, 
+INFO | Processing: The Political Economy of Development – Blattman & Montero – Spring 2023.pdf  →  class label: The Political Economy of Development – Blattman & Montero – Spring 2023
+INFO |   Sending 48143 characters to Claude…
+INFO | HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+ERROR |   Claude returned invalid JSON for The Political Economy of Development – Blattman & Montero – Spring 2023.pdf (Unterminated string starting at: line 503 column 26 (char 24883)). Raw output (first 500 chars):
+[
+  {
+    "original_citation": "Blouin, A., & Mukand, S. (2019). \"Erasing Ethnicity? Propaganda, Nation Building and Identity in Rwanda.\" Journal of Political Economy 127(3).",
+    "authors": "Blouin, A.; Mukand, S.",
+    "year": "2019",
+    "title": "Erasing Ethnicity? Propaganda, Nation Building and Identity in Rwanda",
+    "journal": "Journal of Political Economy",
+    "issue_pages": "127(3)",
+    "link": "",
+    "source_type": "Journal Article"
+  },
+  {
+    "original_citation": "Burgess, R
+INFO | Processing: The Political Underpinnings of Prosperity and Poverty – Fergusson & Querubín & Robinson – Summer 2020.pdf  →  class label: The Political Underpinnings of Prosperity and Poverty – Fergusson & Querubín & Robinson – Summer 2020
+INFO |   Sending 13173 characters to Claude…
+INFO | HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+INFO |   Claude extracted 50 reference(s).
+INFO | Processing: Topics in Political Economy – Fergusson & Xefteris – Fall.pdf  →  class label: Topics in Political Economy – Fergusson & Xefteris – Fall.pdf
+INFO |   Sending 13439 characters to Claude…
+INFO | HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+INFO |   Claude extracted 18 reference(s).
+INFO | Total raw references across all syllabi: 68
+INFO | After deduplication: 65 unique reference(s)
+INFO | Saved spreadsheet → /Users/lilamack/Desktop/Projects/Syllabi Text Extraction for Theory Collection/literature_from_selected_syllabi_claude.xlsx
+
+==========================================================
+  LITERATURE EXTRACTION SUMMARY  (Claude API)
+==========================================================
+  PDFs processed             : 11
+  Raw references extracted   : 68
+  Unique references (deduped): 65
+  Output spreadsheet         : literature_from_selected_syllabi_claude.xlsx
+==========================================================
+
+(venv) (base) lilamack@MacBook-Pro-99 Syllabi Text Extraction for Theory Collection % python "syllabus_literature_extraction_claude.py"
+
+INFO | Found 11 PDF(s) in '/Users/lilamack/Desktop/Projects/Syllabi Text Extraction for Theory Collection/Syllabi to Draw From'
+INFO | Processing: Economic Development Theory and Evidence – Ferrara & Rodrik – Fall 2025.pdf  →  class label: Economic Development: Theory and Evidence – Ferrara & Rodrik – Fall 2025
+INFO |   40140 characters → 4 chunk(s) for Claude.
+INFO | HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+INFO |   Chunk 1/4 → 4 reference(s).
+INFO | HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+INFO |   Chunk 2/4 → 49 reference(s).
+INFO | HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+ERROR |   Invalid JSON from Claude for Economic Development Theory and Evidence – Ferrara & Rodrik – Fall 2025.pdf chunk 3 (Expecting property name enclosed in double quotes: line 509 column 16 (char 24599)). First 300 chars:
+[
+  {
+    "original_citation": "Duflo, Esther. 2001. \"Schooling and Labor Market Consequences of School Construction in Indonesia: Evidence from an Unusual Policy Experiment.\" American Economic Review, 91 (4): 795-813.",
+    "authors": "Duflo, Esther",
+    "year": "2001",
+    "title": "Schooling a
+INFO |   Chunk 3/4 → 0 reference(s).
+INFO | HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+INFO |   Chunk 4/4 → 26 reference(s).
+INFO |   Total extracted from Economic Development Theory and Evidence – Ferrara & Rodrik – Fall 2025.pdf: 79 reference(s).
+INFO |   Looking up DOIs via Crossref for 79 reference(s) with no link…
+INFO |   Crossref enrichment: found DOIs for 60/79 reference(s).
+INFO |   Saved intermediate JSON → Economic Development Theory and Evidence – Ferrara & Rodrik – Fall 2025.json
+INFO | Processing: Economía Política – Fergusson – 2026.pdf  →  class label: Economía Política – Fergusson – 2026.pdf
+INFO |   54520 characters → 5 chunk(s) for Claude.
+INFO | HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+ERROR |   Invalid JSON from Claude for Economía Política – Fergusson – 2026.pdf chunk 1 (Expecting value: line 1 column 1 (char 0)). First 300 chars:
+I need to extract assigned readings from this syllabus excerpt. After reviewing the content, this portion (part 1/5) contains only course administrative information, learning objectives, methodology, and grading structure — no assigned readings are listed yet.
+
+[]
+INFO |   Chunk 1/5 → 0 reference(s).
+INFO | HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+INFO |   Chunk 2/5 → 17 reference(s).
+INFO | HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+ERROR |   Invalid JSON from Claude for Economía Política – Fergusson – 2026.pdf chunk 3 (Unterminated string starting at: line 428 column 20 (char 23682)). First 300 chars:
+[
+  {
+    "original_citation": "Daron Acemoglu, Simon Johnson, James A Robinson, and Pierre Yared. Income and democracy. American Economic Review, 98(3):808–42, 2008",
+    "authors": "Daron Acemoglu; Simon Johnson; James A Robinson; Pierre Yared",
+    "year": "2008",
+    "title": "Income and democra
+INFO |   Chunk 3/5 → 0 reference(s).
+INFO | HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+INFO |   Chunk 4/5 → 12 reference(s).
+INFO | HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+INFO |   Chunk 5/5 → 29 reference(s).
+INFO |   Total extracted from Economía Política – Fergusson – 2026.pdf: 58 reference(s).
+INFO |   Looking up DOIs via Crossref for 8 reference(s) with no link…
+INFO |   Crossref enrichment: found DOIs for 7/8 reference(s).
+INFO |   Saved intermediate JSON → Economía Política – Fergusson – 2026.json
+INFO | Processing: Political Economy and Institutions – Ferraz – Spring 2021.pdf  →  class label: Political Economy and Institutions – Ferraz – Spring 2021
+INFO |   35480 characters → 3 chunk(s) for Claude.
+INFO | HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+INFO |   Chunk 1/3 → 24 reference(s).
+INFO | HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+ERROR |   Invalid JSON from Claude for Political Economy and Institutions – Ferraz – Spring 2021.pdf chunk 2 (Expecting value: line 500 column 19 (char 24894)). First 300 chars:
+[
+  {
+    "original_citation": "Brum, M. (2018), \"Do Dictatorships Affect People's Long-Term Beliefs and Preferences? An Empirical Assessment of the Latin American Case\"",
+    "authors": "Brum M.",
+    "year": "2018",
+    "title": "Do Dictatorships Affect People's Long-Term Beliefs and Preferences
+INFO |   Chunk 2/3 → 0 reference(s).
+INFO | HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+ERROR |   Invalid JSON from Claude for Political Economy and Institutions – Ferraz – Spring 2021.pdf chunk 3 (Expecting ',' delimiter: line 3 column 94 (char 99)). First 300 chars:
+[
+  {
+    "original_citation": "Understanding Political Incentives for Providing Public Services," World Bank Research Observer, World Bank Group, vol. 20(1), pages 1-27.",
+    "authors": "",
+    "year": "",
+    "title": "Understanding Political Incentives for Providing Public Services",
+    "journa
+INFO |   Chunk 3/3 → 0 reference(s).
+INFO |   Total extracted from Political Economy and Institutions – Ferraz – Spring 2021.pdf: 24 reference(s).
+INFO |   Looking up DOIs via Crossref for 24 reference(s) with no link…
+INFO |   Crossref enrichment: found DOIs for 14/24 reference(s).
+INFO |   Saved intermediate JSON → Political Economy and Institutions – Ferraz – Spring 2021.json
+INFO | Processing: Political Economy of Development – Humphreys – Fall 2018.pdf  →  class label: Political Economy of Development – Humphreys – Fall 2018
+INFO |   24426 characters → 3 chunk(s) for Claude.
+INFO | HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+INFO |   Chunk 1/3 → 29 reference(s).
+INFO | HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+ERROR |   Invalid JSON from Claude for Political Economy of Development – Humphreys – Fall 2018.pdf chunk 2 (Unterminated string starting at: line 475 column 13 (char 25026)). First 300 chars:
+[
+  {
+    "original_citation": "Jasper Cooper. State Capacity and Gender Inequality: Experimental evidence from Papua New Guinea. Working Paper, 2018. URL http://jasper-cooper.com/papers/Cooper_CAP.pdf",
+    "authors": "Jasper Cooper",
+    "year": "2018",
+    "title": "State Capacity and Gender Ineq
+INFO |   Chunk 2/3 → 0 reference(s).
+INFO | HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+INFO |   Chunk 3/3 → 3 reference(s).
+INFO |   Total extracted from Political Economy of Development – Humphreys – Fall 2018.pdf: 32 reference(s).
+INFO |   Looking up DOIs via Crossref for 7 reference(s) with no link…
+INFO |   Crossref enrichment: found DOIs for 4/7 reference(s).
+INFO |   Saved intermediate JSON → Political Economy of Development – Humphreys – Fall 2018.json
+INFO | Processing: Political Economy of Institutions and Development – Acemoglu & Garcia-Jimeno – Spring 2017.pdf  →  class label: Political Economy of Institutions and Development – Acemoglu & Garcia-Jimeno – Spring 2017
+INFO |   36977 characters → 4 chunk(s) for Claude.
+INFO | HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+ERROR |   Invalid JSON from Claude for Political Economy of Institutions and Development – Acemoglu & Garcia-Jimeno – Spring 2017.pdf chunk 1 (Unterminated string starting at: line 543 column 26 (char 24382)). First 300 chars:
+[
+  {
+    "original_citation": "*Acemoglu, Daron, Johnson, Simon and Robinson, James (2006) \"Institutions as a Fundamental Cause of Long-Run Growth\" in Handbook of Economic Growth, Aghion, Philippe and Durlauf, Steven, eds. Amsterdam; North-Holland.",
+    "authors": "Acemoglu, Daron; Johnson, Simo
+INFO |   Chunk 1/4 → 0 reference(s).
+INFO | HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+ERROR |   Invalid JSON from Claude for Political Economy of Institutions and Development – Acemoglu & Garcia-Jimeno – Spring 2017.pdf chunk 2 (Expecting ',' delimiter: line 3 column 70 (char 75)). First 300 chars:
+[
+  {
+    "original_citation": "Markets: The Advantage of an Early Start," Journal of Economic Growth, 7: 347-69.",
+    "authors": "",
+    "year": "",
+    "title": "Markets: The Advantage of an Early Start",
+    "journal": "Journal of Economic Growth",
+    "issue_pages": "7: 347-69",
+    "link": "",
+INFO |   Chunk 2/4 → 0 reference(s).
+INFO | HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+ERROR |   Invalid JSON from Claude for Political Economy of Institutions and Development – Acemoglu & Garcia-Jimeno – Spring 2017.pdf chunk 3 (Expecting ',' delimiter: line 470 column 37 (char 23882)). First 300 chars:
+[
+  {
+    "original_citation": "Egorov, Georgy, and Konstantin Sonin (2011). \"Dictators and Their Viziers: Endogenizing the Loyalty-Competence Trade-off\", Journal of European Economic Association, Vol. 9, No. 5, pp. 903-930.",
+    "authors": "Egorov, Georgy; Sonin, Konstantin",
+    "year": "2011",
+INFO |   Chunk 3/4 → 0 reference(s).
+INFO | HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+INFO |   Chunk 4/4 → 6 reference(s).
+INFO |   Total extracted from Political Economy of Institutions and Development – Acemoglu & Garcia-Jimeno – Spring 2017.pdf: 6 reference(s).
+INFO |   Looking up DOIs via Crossref for 6 reference(s) with no link…
+INFO |   Crossref enrichment: found DOIs for 5/6 reference(s).
+INFO |   Saved intermediate JSON → Political Economy of Institutions and Development – Acemoglu & Garcia-Jimeno – Spring 2017.json
+INFO | Processing: Principles of Political Science – Martinez – Spring 2025.pdf  →  class label: Principles of Political Science – Martinez – Spring 2025
+INFO |   15070 characters → 2 chunk(s) for Claude.
+INFO | HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+INFO |   Chunk 1/2 → 0 reference(s).
+INFO | HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+INFO |   Chunk 2/2 → 0 reference(s).
+INFO |   Total extracted from Principles of Political Science – Martinez – Spring 2025.pdf: 0 reference(s).
+INFO |   Saved intermediate JSON → Principles of Political Science – Martinez – Spring 2025.json
+INFO | Processing: State Capacity – Martinez – Spring 2025.pdf  →  class label: State Capacity – Martinez – Spring 2025
+INFO |   14736 characters → 2 chunk(s) for Claude.
+INFO | HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+INFO |   Chunk 1/2 → 37 reference(s).
+INFO | HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+ERROR |   Invalid JSON from Claude for State Capacity – Martinez – Spring 2025.pdf chunk 2 (Expecting ',' delimiter: line 13 column 54 (char 400)). First 300 chars:
+[
+  {
+    "original_citation": "Weber, Max (2019 [1921]). Economy and Society. Harvard University Press. Chapter 3: 338-378.",
+    "authors": "Weber, Max",
+    "year": "2019",
+    "title": "Economy and Society",
+    "journal": "Harvard University Press",
+    "issue_pages": "Chapter 3: 338-378",
+    
+INFO |   Chunk 2/2 → 0 reference(s).
+INFO |   Total extracted from State Capacity – Martinez – Spring 2025.pdf: 37 reference(s).
+INFO |   Looking up DOIs via Crossref for 37 reference(s) with no link…
+INFO |   Crossref enrichment: found DOIs for 33/37 reference(s).
+INFO |   Saved intermediate JSON → State Capacity – Martinez – Spring 2025.json
+INFO | Processing: The Logics of Violence Rebels, Criminal Groups, and the State – Magaloni – Fall 2025.pdf  →  class label: The Logics of Violence: Rebels, Criminal Groups, and the State – Magaloni – Fall 2025
+INFO |   19067 characters → 2 chunk(s) for Claude.
+INFO | HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+ERROR |   Invalid JSON from Claude for The Logics of Violence Rebels, Criminal Groups, and the State – Magaloni – Fall 2025.pdf chunk 1 (Unterminated string starting at: line 508 column 20 (char 24620)). First 300 chars:
+[
+  {
+    "original_citation": "Fearon, James D., and David D. Laitin. \"Ethnicity, insurgency, and civil war.\" American Political Science Review 97, no. 01 (2003): 75-90.",
+    "authors": "Fearon, James D.; Laitin, David D.",
+    "year": "2003",
+    "title": "Ethnicity, insurgency, and civil war",
+INFO |   Chunk 1/2 → 0 reference(s).
+INFO | HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+INFO |   Chunk 2/2 → 37 reference(s).
+INFO |   Total extracted from The Logics of Violence Rebels, Criminal Groups, and the State – Magaloni – Fall 2025.pdf: 37 reference(s).
+INFO |   Looking up DOIs via Crossref for 37 reference(s) with no link…
+INFO |   Crossref enrichment: found DOIs for 33/37 reference(s).
+INFO |   Saved intermediate JSON → The Logics of Violence Rebels, Criminal Groups, and the State – Magaloni – Fall 2025.json
+INFO | Processing: The Political Economy of Development – Blattman & Montero – Spring 2023.pdf  →  class label: The Political Economy of Development – Blattman & Montero – Spring 2023
+INFO |   48143 characters → 5 chunk(s) for Claude.
+INFO | HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+INFO |   Chunk 1/5 → 6 reference(s).
+INFO | HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+ERROR |   Invalid JSON from Claude for The Political Economy of Development – Blattman & Montero – Spring 2023.pdf chunk 2 (Unterminated string starting at: line 494 column 16 (char 24756)). First 300 chars:
+[
+  {
+    "original_citation": "Sanchez de la Sierra, Raul. 2021. \"Whither Formal Contracts?\" Econometrica, 89(5), 2341-2373.",
+    "authors": "Sanchez de la Sierra, Raul",
+    "year": "2021",
+    "title": "Whither Formal Contracts?",
+    "journal": "Econometrica",
+    "issue_pages": "89(5), 2341-
+INFO |   Chunk 2/5 → 0 reference(s).
+INFO | HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+ERROR |   Invalid JSON from Claude for The Political Economy of Development – Blattman & Montero – Spring 2023.pdf chunk 3 (Unterminated string starting at: line 529 column 5 (char 24091)). First 300 chars:
+[
+  {
+    "original_citation": "Jha, Saumitra, and Moses Shayo. 2019. \"Valuing Peace: The Effects of Financial Market Exposure on Votes and Political Attitudes.\" Econometrica 87(5).",
+    "authors": "Jha, Saumitra; Shayo, Moses",
+    "year": "2019",
+    "title": "Valuing Peace: The Effects of Fina
+INFO |   Chunk 3/5 → 0 reference(s).
+INFO | HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+ERROR |   Invalid JSON from Claude for The Political Economy of Development – Blattman & Montero – Spring 2023.pdf chunk 4 (Unterminated string starting at: line 505 column 5 (char 24941)). First 300 chars:
+[
+  {
+    "original_citation": "Chiovelli, Giorgio, Leopoldo Fergusson, Luis R. Martínez, Juan David Torres and Felipe Valencia Caicedo. 2022. \"Bourbon Reforms and State Capacity in the Spanish Empire,\" Working Paper",
+    "authors": "Chiovelli, Giorgio; Fergusson, Leopoldo; Martínez, Luis R.; Tor
+INFO |   Chunk 4/5 → 0 reference(s).
+INFO | HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+INFO |   Chunk 5/5 → 1 reference(s).
+INFO |   Total extracted from The Political Economy of Development – Blattman & Montero – Spring 2023.pdf: 7 reference(s).
+INFO |   Looking up DOIs via Crossref for 7 reference(s) with no link…
+INFO |   Crossref enrichment: found DOIs for 6/7 reference(s).
+INFO |   Saved intermediate JSON → The Political Economy of Development – Blattman & Montero – Spring 2023.json
+INFO | Processing: The Political Underpinnings of Prosperity and Poverty – Fergusson & Querubín & Robinson – Summer 2020.pdf  →  class label: The Political Underpinnings of Prosperity and Poverty – Fergusson & Querubín & Robinson – Summer 2020
+INFO |   13173 characters → 2 chunk(s) for Claude.
+INFO | HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+INFO |   Chunk 1/2 → 42 reference(s).
+INFO | HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+INFO |   Chunk 2/2 → 8 reference(s).
+INFO |   Total extracted from The Political Underpinnings of Prosperity and Poverty – Fergusson & Querubín & Robinson – Summer 2020.pdf: 50 reference(s).
+INFO |   Looking up DOIs via Crossref for 42 reference(s) with no link…
+INFO |   Crossref enrichment: found DOIs for 35/42 reference(s).
+INFO |   Saved intermediate JSON → The Political Underpinnings of Prosperity and Poverty – Fergusson & Querubín & Robinson – Summer 2020.json
+INFO | Processing: Topics in Political Economy – Fergusson & Xefteris – Fall.pdf  →  class label: Topics in Political Economy – Fergusson & Xefteris – Fall.pdf
+INFO |   13439 characters → 2 chunk(s) for Claude.
+INFO | HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+INFO |   Chunk 1/2 → 18 reference(s).
+INFO | HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+INFO |   Chunk 2/2 → 4 reference(s).
+INFO |   Total extracted from Topics in Political Economy – Fergusson & Xefteris – Fall.pdf: 22 reference(s).
+INFO |   Looking up DOIs via Crossref for 22 reference(s) with no link…
+INFO |   Crossref enrichment: found DOIs for 20/22 reference(s).
+INFO |   Saved intermediate JSON → Topics in Political Economy – Fergusson & Xefteris – Fall.json
+INFO | Total raw references across all syllabi: 352
+INFO | After deduplication: 307 unique reference(s)
+INFO | Saved spreadsheet → /Users/lilamack/Desktop/Projects/Syllabi Text Extraction for Theory Collection/literature_from_selected_syllabi_claude.xlsx
+
+==========================================================
+  LITERATURE EXTRACTION SUMMARY  (Claude API)
+==========================================================
+  PDFs processed             : 11
+  Raw references extracted   : 352
+  Unique references (deduped): 307
+  Output spreadsheet         : literature_from_selected_syllabi_claude.xlsx
+==========================================================

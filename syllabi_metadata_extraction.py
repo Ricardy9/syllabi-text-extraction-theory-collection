@@ -50,6 +50,7 @@ COLUMNS = [
     "Year the Course was taught",
     "Term (Spring, Winter, etc) the Course was Taught",
     "University where this course was taught",
+    "New Syllabus Name",
     "Person in charge of digitizing this syllabus",
 ]
 
@@ -295,6 +296,105 @@ def regex_fallback(header_zone: str, full_text: str, filename: str) -> dict:
 
 
 # ---------------------------------------------------------------------------
+# New Syllabus Name helpers
+# ---------------------------------------------------------------------------
+
+def _last_names(professors_str: str) -> list[str]:
+    """Extract last names from a semicolon-separated professors string."""
+    if not professors_str.strip():
+        return []
+    names = [p.strip() for p in professors_str.split(";") if p.strip()]
+    return [n.split()[-1] for n in names if n.split()]
+
+
+def build_new_syllabus_name(title: str, professors: str, term: str, year: str, university: str = "") -> str:
+    """
+    Build a standardised syllabus name:
+        Course Title – Prof1Last & Prof2Last – Term Year – University
+    Uses whatever fields are available; returns empty string only if title is missing.
+    """
+    if not title:
+        return ""
+    lasts     = _last_names(professors)
+    prof_part = " & ".join(lasts) if lasts else ""
+    term_year = " ".join(filter(None, [term, year]))
+
+    parts = [title]
+    if prof_part:
+        parts.append(prof_part)
+    if term_year:
+        parts.append(term_year)
+    if university.strip():
+        parts.append(university.strip())
+    return " \u2013 ".join(parts)
+
+
+def sanitize_for_filename(name: str) -> str:
+    """Replace characters that are invalid in macOS/Windows filenames."""
+    # Colon is the main offender on macOS; also strip leading/trailing spaces
+    replacements = {":" : "", "/" : "-", "\\" : "-", "|" : "-", "?" : "", "*" : "", '"' : ""}
+    for char, sub in replacements.items():
+        name = name.replace(char, sub)
+    return name.strip()
+
+
+# ---------------------------------------------------------------------------
+# PDF renaming
+# ---------------------------------------------------------------------------
+
+def rename_pdfs(df: pd.DataFrame) -> None:
+    """
+    For every row in *df* that has a non-empty 'New Syllabus Name', check
+    whether the PDF in SYLLABI_FOLDER already has that name.  If not, rename
+    the file.
+    """
+    renamed = 0
+    skipped = 0
+    missing = 0
+
+    for _, row in df.iterrows():
+        new_name_raw = str(row.get("New Syllabus Name", "")).strip()
+        original     = str(row.get("Original name of syllabus PDF", "")).strip()
+
+        if not new_name_raw or not original:
+            skipped += 1
+            continue
+
+        new_stem     = sanitize_for_filename(new_name_raw)
+        new_filename = new_stem + ".pdf"
+
+        if new_filename == original:
+            log.info("Already correctly named: %s", original)
+            skipped += 1
+            continue
+
+        src = SYLLABI_FOLDER / original
+        dst = SYLLABI_FOLDER / new_filename
+
+        if not src.exists():
+            log.warning("Source file not found, skipping rename: %s", original)
+            missing += 1
+            continue
+
+        if dst.exists():
+            log.warning("Destination already exists, skipping rename: %s → %s", original, new_filename)
+            skipped += 1
+            continue
+
+        src.rename(dst)
+        log.info("Renamed: %s  →  %s", original, new_filename)
+        renamed += 1
+
+    print("\n" + "=" * 50)
+    print("  RENAME SUMMARY")
+    print("=" * 50)
+    print(f"  Renamed          : {renamed}")
+    print(f"  Already correct  : {skipped}")
+    print(f"  Source not found : {missing}")
+    print("=" * 50 + "\n")
+
+
+# ---------------------------------------------------------------------------
 # Per-file processing
 # ---------------------------------------------------------------------------
 
@@ -346,6 +446,17 @@ def process_pdf(pdf_path: Path) -> dict:
     # ------------------------------------------------------------------
     for key, value in metadata.items():
         row[key] = value
+
+    # ------------------------------------------------------------------
+    # Step 4: Build the standardised New Syllabus Name
+    # ------------------------------------------------------------------
+    row["New Syllabus Name"] = build_new_syllabus_name(
+        title      = row.get("Course Title", ""),
+        professors = row.get("Course Professors", ""),
+        term       = row.get("Term (Spring, Winter, etc) the Course was Taught", ""),
+        year       = row.get("Year the Course was taught", ""),
+        university = row.get("University where this course was taught", ""),
+    )
 
     return row
 
@@ -401,6 +512,8 @@ def main():
     df.to_csv(OUTPUT_CSV, index=False)
     log.info("Saved Excel → %s", OUTPUT_XLSX)
     log.info("Saved CSV   → %s", OUTPUT_CSV)
+
+    rename_pdfs(df)
 
     total = len(pdf_files)
     print("\n" + "=" * 50)

@@ -1,0 +1,2057 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Reading Leaderboard</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: #f0f4f8;
+      color: #1e293b;
+      min-height: 100vh;
+      padding: 2.5rem 1.5rem;
+    }
+
+    .card {
+      max-width: 900px;
+      margin: 0 auto;
+      background: #ffffff;
+      border-radius: 16px;
+      box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+      padding: 2.5rem 2.5rem 2rem;
+    }
+
+    header {
+      margin-bottom: 2rem;
+      border-bottom: 1px solid #e2e8f0;
+      padding-bottom: 1.25rem;
+    }
+
+    header h1 {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: #0f172a;
+      line-height: 1.3;
+    }
+
+    header p {
+      margin-top: 0.35rem;
+      font-size: 0.875rem;
+      color: #64748b;
+    }
+
+    .row {
+      display: grid;
+      grid-template-columns: 1fr 55%;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.65rem 0;
+      border-bottom: 1px solid #f1f5f9;
+    }
+
+    .row:last-child { border-bottom: none; }
+
+    .label {
+      display: flex;
+      flex-direction: column;
+      gap: 0.1rem;
+      overflow: hidden;
+    }
+
+    .author {
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: #475569;
+      white-space: nowrap;
+    }
+
+    .title {
+      font-size: 0.82rem;
+      color: #334155;
+      line-height: 1.35;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    .bar-wrap {
+      position: relative;
+    }
+
+    .bar-clip {
+      background: #f1f5f9;
+      border-radius: 6px;
+      height: 28px;
+      overflow: hidden;
+    }
+
+    .bar {
+      height: 100%;
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      padding-right: 8px;
+      min-width: 28px;
+      transition: width 0.4s ease;
+    }
+
+    .bar-count {
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: #ffffff;
+      text-shadow: 0 1px 2px rgba(0,0,0,0.25);
+      white-space: nowrap;
+    }
+
+    footer {
+      margin-top: 1.5rem;
+      font-size: 0.75rem;
+      color: #94a3b8;
+      text-align: right;
+    }
+
+    .tooltip {
+      display: none;
+      position: absolute;
+      top: calc(100% + 6px);
+      left: 0;
+      z-index: 100;
+      background: #1e293b;
+      color: #f8fafc;
+      font-size: 0.78rem;
+      line-height: 1.5;
+      border-radius: 8px;
+      padding: 0.6rem 0.85rem;
+      min-width: 200px;
+      width: max-content;
+      max-width: none;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.2);
+      pointer-events: none;
+    }
+
+    .tooltip ul {
+      margin: 0;
+      padding-left: 1.1rem;
+    }
+
+    .tooltip li {
+      margin: 0.2rem 0;
+      white-space: nowrap;
+    }
+
+    .tooltip .syllabus-univ {
+      display: block;
+      font-size: 0.7rem;
+      color: #94a3b8;
+      white-space: nowrap;
+    }
+
+    .bar-wrap:hover .tooltip {
+      display: block;
+    }
+
+    .syllabi-box {
+      background: #f1f5f9;
+      border-radius: 10px;
+      padding: 1.25rem 1.5rem;
+      margin-bottom: 2rem;
+    }
+
+    .syllabi-box h2 {
+      font-size: 0.8rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: #64748b;
+      margin-bottom: 0.85rem;
+    }
+
+    .syllabi-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+
+    .syllabus-item {
+      display: flex;
+      flex-direction: column;
+      gap: 0.1rem;
+    }
+
+    .syllabus-course {
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: #1e293b;
+      line-height: 1.3;
+    }
+
+    .syllabus-profs {
+      font-size: 0.72rem;
+      color: #475569;
+    }
+
+    .syllabus-meta {
+      font-size: 0.7rem;
+      color: #94a3b8;
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <header>
+      <h1>Readings Appearing Across the Multiple Syllabi</h1>
+      <p>136 readings &nbsp;·&nbsp; appearing in 2+ syllabi &nbsp;·&nbsp; bar length = share of maximum (6)</p>
+    </header>
+
+    <div class="syllabi-box">
+      <h2>Syllabi Analyzed</h2>
+      <div class="syllabi-grid">
+
+        <div class="syllabus-item">
+          <span class="syllabus-course">Economía Política</span>
+          <span class='syllabus-profs'>Leopoldo Fergusson</span>
+          <span class='syllabus-meta'>Fall 2026 · Universidad de los Andes</span>
+        </div>
+        <div class="syllabus-item">
+          <span class="syllabus-course">Economic Development: Theory and Evidence</span>
+          <span class='syllabus-profs'>Eliana La Ferrara; Dani Rodrik</span>
+          <span class='syllabus-meta'>Fall 2025 · Harvard University</span>
+        </div>
+        <div class="syllabus-item">
+          <span class="syllabus-course">State Capacity</span>
+          <span class='syllabus-profs'>Luis R. Martinez</span>
+          <span class='syllabus-meta'>Spring 2025 · Emory University</span>
+        </div>
+        <div class="syllabus-item">
+          <span class="syllabus-course">The Logics of Violence: Rebels, Criminal Groups, and the State</span>
+          <span class='syllabus-profs'>Beatriz Magaloni</span>
+          <span class='syllabus-meta'>Fall 2025 · Stanford University</span>
+        </div>
+        <div class="syllabus-item">
+          <span class="syllabus-course">The Political Economy of Development</span>
+          <span class='syllabus-profs'>Chris Blattman; Eduardo Montero</span>
+          <span class='syllabus-meta'>Spring 2023 · University of Chicago</span>
+        </div>
+        <div class="syllabus-item">
+          <span class="syllabus-course">Political Economy and Institutions</span>
+          <span class='syllabus-profs'>Claudio Ferraz</span>
+          <span class='syllabus-meta'>Spring 2021 · University of British Columbia</span>
+        </div>
+        <div class="syllabus-item">
+          <span class="syllabus-course">The Political Underpinnings of Prosperity and Poverty</span>
+          <span class='syllabus-profs'>Leopoldo Fergusson; Pablo Querubín; James A. Robinson</span>
+          <span class='syllabus-meta'>Summer 2020 · Universidad de los Andes</span>
+        </div>
+        <div class="syllabus-item">
+          <span class="syllabus-course">Political Economy of Development</span>
+          <span class='syllabus-profs'>Macartan Humphreys</span>
+          <span class='syllabus-meta'>Fall 2018 · Columbia University</span>
+        </div>
+        <div class="syllabus-item">
+          <span class="syllabus-course">Political Economy of Institutions and Development</span>
+          <span class='syllabus-profs'>Daron Acemoglu; Camilo Garcia-Jimeno</span>
+          <span class='syllabus-meta'>Spring 2017 · Massachusetts Institute of Technology</span>
+        </div>
+        <div class="syllabus-item">
+          <span class="syllabus-course">Topics in Political Economy</span>
+          <span class='syllabus-profs'>Leopoldo Fergusson; Dimitrios Xefteris</span>
+          <span class='syllabus-meta'>Fall · Universitat de Barcelona</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="leaderboard">
+
+        <div class="row">
+          <div class="label">
+            <span class="author">Acemoglu et al. (2001)</span>
+            <span class="title">The Colonial Origins of Comparative Development: An Empirical Investigation</span>
+          </div>
+          <div class="bar-wrap" data-syllabi='[{"name": "Economic Development Theory and Evidence \u2013 Ferrara & Rodrik \u2013 Fall 2025 \u2013 Harvard University.pdf", "univ": ""}, {"name": "Political Economy and Institutions \u2013 Ferraz \u2013 Spring 2021 \u2013 University of British Columbia.pdf", "univ": ""}, {"name": "Political Economy of Development \u2013 Humphreys \u2013 Fall 2018 \u2013 Columbia University.pdf", "univ": ""}, {"name": "Political Economy of Institutions and Development \u2013 Acemoglu & Garcia-Jimeno \u2013 Spring 2017 \u2013 Massachusetts Institute of Technology.pdf", "univ": ""}, {"name": "The Political Economy of Development \u2013 Blattman & Montero \u2013 Spring 2023 \u2013 University of Chicago.pdf", "univ": ""}, {"name": "The Political Underpinnings of Prosperity and Poverty \u2013 Fergusson & Querub\u00edn & Robinson \u2013 Summer 2020 \u2013 Universidad de los Andes.pdf", "univ": ""}]'>
+            <div class="bar-clip">
+              <div class="bar" style="width:100.0%; background:rgb(26,95,138);">
+                <span class="bar-count">6</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="label">
+            <span class="author">Dell (2015)</span>
+            <span class="title">Trafficking Networks and the Mexican Drug War</span>
+          </div>
+          <div class="bar-wrap" data-syllabi='[{"name": "Political Economy and Institutions \u2013 Ferraz \u2013 Spring 2021 \u2013 University of British Columbia.pdf", "univ": ""}, {"name": "Political Economy of Institutions and Development \u2013 Acemoglu & Garcia-Jimeno \u2013 Spring 2017 \u2013 Massachusetts Institute of Technology.pdf", "univ": ""}, {"name": "The Logics of Violence Rebels, Criminal Groups, and the State \u2013 Magaloni \u2013 Fall 2025 \u2013 Stanford University.pdf", "univ": ""}, {"name": "The Political Economy of Development \u2013 Blattman & Montero \u2013 Spring 2023 \u2013 University of Chicago.pdf", "univ": ""}, {"name": "Topics in Political Economy \u2013 Fergusson & Xefteris \u2013 Fall \u2013 Universitat de Barcelona.pdf", "univ": ""}]'>
+            <div class="bar-clip">
+              <div class="bar" style="width:83.3%; background:rgb(56,120,160);">
+                <span class="bar-count">5</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="label">
+            <span class="author">Nunn (2008)</span>
+            <span class="title">The Long-Term Effects of Africa's Slave Trades</span>
+          </div>
+          <div class="bar-wrap" data-syllabi='[{"name": "Economic Development Theory and Evidence \u2013 Ferrara & Rodrik \u2013 Fall 2025 \u2013 Harvard University.pdf", "univ": ""}, {"name": "Political Economy and Institutions \u2013 Ferraz \u2013 Spring 2021 \u2013 University of British Columbia.pdf", "univ": ""}, {"name": "Political Economy of Development \u2013 Humphreys \u2013 Fall 2018 \u2013 Columbia University.pdf", "univ": ""}, {"name": "The Political Economy of Development \u2013 Blattman & Montero \u2013 Spring 2023 \u2013 University of Chicago.pdf", "univ": ""}, {"name": "The Political Underpinnings of Prosperity and Poverty \u2013 Fergusson & Querub\u00edn & Robinson \u2013 Summer 2020 \u2013 Universidad de los Andes.pdf", "univ": ""}]'>
+            <div class="bar-clip">
+              <div class="bar" style="width:83.3%; background:rgb(56,120,160);">
+                <span class="bar-count">5</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="label">
+            <span class="author">Dell (2010)</span>
+            <span class="title">The Persistent Effects of Peru's Mining Mita</span>
+          </div>
+          <div class="bar-wrap" data-syllabi='[{"name": "Economic Development Theory and Evidence \u2013 Ferrara & Rodrik \u2013 Fall 2025 \u2013 Harvard University.pdf", "univ": ""}, {"name": "Political Economy and Institutions \u2013 Ferraz \u2013 Spring 2021 \u2013 University of British Columbia.pdf", "univ": ""}, {"name": "Political Economy of Institutions and Development \u2013 Acemoglu & Garcia-Jimeno \u2013 Spring 2017 \u2013 Massachusetts Institute of Technology.pdf", "univ": ""}, {"name": "The Political Economy of Development \u2013 Blattman & Montero \u2013 Spring 2023 \u2013 University of Chicago.pdf", "univ": ""}, {"name": "The Political Underpinnings of Prosperity and Poverty \u2013 Fergusson & Querub\u00edn & Robinson \u2013 Summer 2020 \u2013 Universidad de los Andes.pdf", "univ": ""}]'>
+            <div class="bar-clip">
+              <div class="bar" style="width:83.3%; background:rgb(56,120,160);">
+                <span class="bar-count">5</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="label">
+            <span class="author">Sánchez De La Sierra (n.d.)</span>
+            <span class="title">On the Origin of the State: Stationary Bandits and Taxation in Eastern Congo</span>
+          </div>
+          <div class="bar-wrap" data-syllabi='[{"name": "Political Economy of Development \u2013 Humphreys \u2013 Fall 2018 \u2013 Columbia University.pdf", "univ": ""}, {"name": "Political Economy of Institutions and Development \u2013 Acemoglu & Garcia-Jimeno \u2013 Spring 2017 \u2013 Massachusetts Institute of Technology.pdf", "univ": ""}, {"name": "The Political Economy of Development \u2013 Blattman & Montero \u2013 Spring 2023 \u2013 University of Chicago.pdf", "univ": ""}, {"name": "The Logics of Violence Rebels, Criminal Groups, and the State \u2013 Magaloni \u2013 Fall 2025 \u2013 Stanford University", "univ": ""}]'>
+            <div class="bar-clip">
+              <div class="bar" style="width:66.7%; background:rgb(86,146,181);">
+                <span class="bar-count">4</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="label">
+            <span class="author">Dube & Vargas (2013)</span>
+            <span class="title">Commodity Price Shocks and Civil Conflict: Evidence From Colombia</span>
+          </div>
+          <div class="bar-wrap" data-syllabi='[{"name": "Political Economy of Institutions and Development \u2013 Acemoglu & Garcia-Jimeno \u2013 Spring 2017 \u2013 Massachusetts Institute of Technology.pdf", "univ": ""}, {"name": "The Logics of Violence Rebels, Criminal Groups, and the State \u2013 Magaloni \u2013 Fall 2025 \u2013 Stanford University.pdf", "univ": ""}, {"name": "The Political Economy of Development \u2013 Blattman & Montero \u2013 Spring 2023 \u2013 University of Chicago.pdf", "univ": ""}, {"name": "Topics in Political Economy \u2013 Fergusson & Xefteris \u2013 Fall \u2013 Universitat de Barcelona.pdf", "univ": ""}]'>
+            <div class="bar-clip">
+              <div class="bar" style="width:66.7%; background:rgb(86,146,181);">
+                <span class="bar-count">4</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="label">
+            <span class="author">Ferraz & Finan (2008)</span>
+            <span class="title">Exposing Corrupt Politicians: The Effects of Brazil's Publicly Released Audits on Electoral Outcomes</span>
+          </div>
+          <div class="bar-wrap" data-syllabi='[{"name": "Political Economy and Institutions \u2013 Ferraz \u2013 Spring 2021 \u2013 University of British Columbia.pdf", "univ": ""}, {"name": "Political Economy of Development \u2013 Humphreys \u2013 Fall 2018 \u2013 Columbia University.pdf", "univ": ""}, {"name": "Political Economy of Institutions and Development \u2013 Acemoglu & Garcia-Jimeno \u2013 Spring 2017 \u2013 Massachusetts Institute of Technology.pdf", "univ": ""}, {"name": "The Political Underpinnings of Prosperity and Poverty \u2013 Fergusson & Querub\u00edn & Robinson \u2013 Summer 2020 \u2013 Universidad de los Andes.pdf", "univ": ""}]'>
+            <div class="bar-clip">
+              <div class="bar" style="width:66.7%; background:rgb(86,146,181);">
+                <span class="bar-count">4</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="label">
+            <span class="author">Goldstein & Udry (2008)</span>
+            <span class="title">The Profits of Power: Land Rights and Agricultural Investment in Ghana</span>
+          </div>
+          <div class="bar-wrap" data-syllabi='[{"name": "Economic Development Theory and Evidence \u2013 Ferrara & Rodrik \u2013 Fall 2025 \u2013 Harvard University.pdf", "univ": ""}, {"name": "Political Economy and Institutions \u2013 Ferraz \u2013 Spring 2021 \u2013 University of British Columbia.pdf", "univ": ""}, {"name": "Political Economy of Institutions and Development \u2013 Acemoglu & Garcia-Jimeno \u2013 Spring 2017 \u2013 Massachusetts Institute of Technology.pdf", "univ": ""}, {"name": "The Political Economy of Development \u2013 Blattman & Montero \u2013 Spring 2023 \u2013 University of Chicago.pdf", "univ": ""}]'>
+            <div class="bar-clip">
+              <div class="bar" style="width:66.7%; background:rgb(86,146,181);">
+                <span class="bar-count">4</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="label">
+            <span class="author">Alesina et al. (2019)</span>
+            <span class="title">Organized Crime, Violence, and Politics</span>
+          </div>
+          <div class="bar-wrap" data-syllabi='[{"name": "Political Economy and Institutions \u2013 Ferraz \u2013 Spring 2021 \u2013 University of British Columbia.pdf", "univ": ""}, {"name": "Political Economy of Institutions and Development \u2013 Acemoglu & Garcia-Jimeno \u2013 Spring 2017 \u2013 Massachusetts Institute of Technology.pdf", "univ": ""}, {"name": "The Political Economy of Development \u2013 Blattman & Montero \u2013 Spring 2023 \u2013 University of Chicago.pdf", "univ": ""}, {"name": "Topics in Political Economy \u2013 Fergusson & Xefteris \u2013 Fall \u2013 Universitat de Barcelona.pdf", "univ": ""}]'>
+            <div class="bar-clip">
+              <div class="bar" style="width:66.7%; background:rgb(86,146,181);">
+                <span class="bar-count">4</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="label">
+            <span class="author">Blattman & Miguel (2010)</span>
+            <span class="title">Civil War</span>
+          </div>
+          <div class="bar-wrap" data-syllabi='[{"name": "Political Economy of Development \u2013 Humphreys \u2013 Fall 2018 \u2013 Columbia University.pdf", "univ": ""}, {"name": "Political Economy of Institutions and Development \u2013 Acemoglu & Garcia-Jimeno \u2013 Spring 2017 \u2013 Massachusetts Institute of Technology.pdf", "univ": ""}, {"name": "The Political Economy of Development \u2013 Blattman & Montero \u2013 Spring 2023 \u2013 University of Chicago.pdf", "univ": ""}, {"name": "Topics in Political Economy \u2013 Fergusson & Xefteris \u2013 Fall \u2013 Universitat de Barcelona.pdf", "univ": ""}]'>
+            <div class="bar-clip">
+              <div class="bar" style="width:66.7%; background:rgb(86,146,181);">
+                <span class="bar-count">4</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="label">
+            <span class="author">Acemoglu et al. (2020)</span>
+            <span class="title">Weak States: Causes and Consequences of the Sicilian Mafia</span>
+          </div>
+          <div class="bar-wrap" data-syllabi='[{"name": "Political Economy and Institutions \u2013 Ferraz \u2013 Spring 2021 \u2013 University of British Columbia.pdf", "univ": ""}, {"name": "The Political Economy of Development \u2013 Blattman & Montero \u2013 Spring 2023 \u2013 University of Chicago.pdf", "univ": ""}, {"name": "Topics in Political Economy \u2013 Fergusson & Xefteris \u2013 Fall \u2013 Universitat de Barcelona.pdf", "univ": ""}]'>
+            <div class="bar-clip">
+              <div class="bar" style="width:50.0%; background:rgb(117,171,202);">
+                <span class="bar-count">3</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="label">
+            <span class="author">Acemoglu et al. (2006)</span>
+            <span class="title">Institutions as a Fundamental Cause of Long-Run Growth</span>
+          </div>
+          <div class="bar-wrap" data-syllabi='[{"name": "Political Economy and Institutions \u2013 Ferraz \u2013 Spring 2021 \u2013 University of British Columbia.pdf", "univ": ""}, {"name": "Political Economy of Institutions and Development \u2013 Acemoglu & Garcia-Jimeno \u2013 Spring 2017 \u2013 Massachusetts Institute of Technology.pdf", "univ": ""}, {"name": "The Political Underpinnings of Prosperity and Poverty \u2013 Fergusson & Querub\u00edn & Robinson \u2013 Summer 2020 \u2013 Universidad de los Andes.pdf", "univ": ""}]'>
+            <div class="bar-clip">
+              <div class="bar" style="width:50.0%; background:rgb(117,171,202);">
+                <span class="bar-count">3</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="label">
+            <span class="author">Ferraz & Finan (2011)</span>
+            <span class="title">Electoral Accountability and Corruption: Evidence From the Audits of Local Governments</span>
+          </div>
+          <div class="bar-wrap" data-syllabi='[{"name": "Political Economy and Institutions \u2013 Ferraz \u2013 Spring 2021 \u2013 University of British Columbia.pdf", "univ": ""}, {"name": "Political Economy of Institutions and Development \u2013 Acemoglu & Garcia-Jimeno \u2013 Spring 2017 \u2013 Massachusetts Institute of Technology.pdf", "univ": ""}, {"name": "The Political Underpinnings of Prosperity and Poverty \u2013 Fergusson & Querub\u00edn & Robinson \u2013 Summer 2020 \u2013 Universidad de los Andes.pdf", "univ": ""}]'>
+            <div class="bar-clip">
+              <div class="bar" style="width:50.0%; background:rgb(117,171,202);">
+                <span class="bar-count">3</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="label">
+            <span class="author">Lessing (2015)</span>
+            <span class="title">Logics of Violence in Criminal War</span>
+          </div>
+          <div class="bar-wrap" data-syllabi='[{"name": "Political Economy of Institutions and Development \u2013 Acemoglu & Garcia-Jimeno \u2013 Spring 2017 \u2013 Massachusetts Institute of Technology.pdf", "univ": ""}, {"name": "Topics in Political Economy \u2013 Fergusson & Xefteris \u2013 Fall \u2013 Universitat de Barcelona.pdf", "univ": ""}, {"name": "The Logics of Violence Rebels, Criminal Groups, and the State \u2013 Magaloni \u2013 Fall 2025 \u2013 Stanford University", "univ": ""}]'>
+            <div class="bar-clip">
+              <div class="bar" style="width:50.0%; background:rgb(117,171,202);">
+                <span class="bar-count">3</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="label">
+            <span class="author">Acemoglu et al. (2014)</span>
+            <span class="title">Chiefs: Economic Development and Elite Control of Civil Society in Sierra Leone</span>
+          </div>
+          <div class="bar-wrap" data-syllabi='[{"name": "Political Economy and Institutions \u2013 Ferraz \u2013 Spring 2021 \u2013 University of British Columbia.pdf", "univ": ""}, {"name": "Political Economy of Development \u2013 Humphreys \u2013 Fall 2018 \u2013 Columbia University.pdf", "univ": ""}, {"name": "Political Economy of Institutions and Development \u2013 Acemoglu & Garcia-Jimeno \u2013 Spring 2017 \u2013 Massachusetts Institute of Technology.pdf", "univ": ""}]'>
+            <div class="bar-clip">
+              <div class="bar" style="width:50.0%; background:rgb(117,171,202);">
+                <span class="bar-count">3</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="label">
+            <span class="author">Acemoglu et al. (2013)</span>
+            <span class="title">The Monopoly of Violence: Evidence From Colombia</span>
+          </div>
+          <div class="bar-wrap" data-syllabi='[{"name": "Political Economy and Institutions \u2013 Ferraz \u2013 Spring 2021 \u2013 University of British Columbia.pdf", "univ": ""}, {"name": "Political Economy of Institutions and Development \u2013 Acemoglu & Garcia-Jimeno \u2013 Spring 2017 \u2013 Massachusetts Institute of Technology.pdf", "univ": ""}, {"name": "Topics in Political Economy \u2013 Fergusson & Xefteris \u2013 Fall \u2013 Universitat de Barcelona.pdf", "univ": ""}]'>
+            <div class="bar-clip">
+              <div class="bar" style="width:50.0%; background:rgb(117,171,202);">
+                <span class="bar-count">3</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="label">
+            <span class="author">Acemoglu & Robinson (2005)</span>
+            <span class="title">The Economic Origins of Dictatorship and Democracy</span>
+          </div>
+          <div class="bar-wrap" data-syllabi='[{"name": "Political Economy and Institutions \u2013 Ferraz \u2013 Spring 2021 \u2013 University of British Columbia.pdf", "univ": ""}, {"name": "Political Economy of Institutions and Development \u2013 Acemoglu & Garcia-Jimeno \u2013 Spring 2017 \u2013 Massachusetts Institute of Technology.pdf", "univ": ""}, {"name": "The Political Underpinnings of Prosperity and Poverty \u2013 Fergusson & Querub\u00edn & Robinson \u2013 Summer 2020 \u2013 Universidad de los Andes.pdf", "univ": ""}]'>
+            <div class="bar-clip">
+              <div class="bar" style="width:50.0%; background:rgb(117,171,202);">
+                <span class="bar-count">3</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="label">
+            <span class="author">Olson (1993)</span>
+            <span class="title">Dictatorship, Democracy, and Development</span>
+          </div>
+          <div class="bar-wrap" data-syllabi='[{"name": "Political Economy of Development \u2013 Humphreys \u2013 Fall 2018 \u2013 Columbia University.pdf", "univ": ""}, {"name": "The Political Economy of Development \u2013 Blattman & Montero \u2013 Spring 2023 \u2013 University of Chicago.pdf", "univ": ""}, {"name": "The Logics of Violence Rebels, Criminal Groups, and the State \u2013 Magaloni \u2013 Fall 2025 \u2013 Stanford University", "univ": ""}]'>
+            <div class="bar-clip">
+              <div class="bar" style="width:50.0%; background:rgb(117,171,202);">
+                <span class="bar-count">3</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="label">
+            <span class="author">Olken & Barron (2009)</span>
+            <span class="title">The Simple Economics of Extortion: Evidence From Trucking in Aceh</span>
+          </div>
+          <div class="bar-wrap" data-syllabi='[{"name": "Political Economy and Institutions \u2013 Ferraz \u2013 Spring 2021 \u2013 University of British Columbia.pdf", "univ": ""}, {"name": "Political Economy of Institutions and Development \u2013 Acemoglu & Garcia-Jimeno \u2013 Spring 2017 \u2013 Massachusetts Institute of Technology.pdf", "univ": ""}, {"name": "The Political Economy of Development \u2013 Blattman & Montero \u2013 Spring 2023 \u2013 University of Chicago.pdf", "univ": ""}]'>
+            <div class="bar-clip">
+              <div class="bar" style="width:50.0%; background:rgb(117,171,202);">
+                <span class="bar-count">3</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="label">
+            <span class="author">Banerjee et al. (2012)</span>
+            <span class="title">Corruption</span>
+          </div>
+          <div class="bar-wrap" data-syllabi='[{"name": "Political Economy and Institutions \u2013 Ferraz \u2013 Spring 2021 \u2013 University of British Columbia.pdf", "univ": ""}, {"name": "Political Economy of Institutions and Development \u2013 Acemoglu & Garcia-Jimeno \u2013 Spring 2017 \u2013 Massachusetts Institute of Technology.pdf", "univ": ""}, {"name": "The Political Economy of Development \u2013 Blattman & Montero \u2013 Spring 2023 \u2013 University of Chicago.pdf", "univ": ""}]'>
+            <div class="bar-clip">
+              <div class="bar" style="width:50.0%; background:rgb(117,171,202);">
+                <span class="bar-count">3</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="label">
+            <span class="author">Banerjee (1997)</span>
+            <span class="title">A Theory of Misgovernance</span>
+          </div>
+          <div class="bar-wrap" data-syllabi='[{"name": "Econom\u00eda Pol\u00edtica \u2013 Fergusson \u2013 Fall 2026 \u2013 Universidad de los Andes.pdf", "univ": ""}, {"name": "Political Economy of Institutions and Development \u2013 Acemoglu & Garcia-Jimeno \u2013 Spring 2017 \u2013 Massachusetts Institute of Technology.pdf", "univ": ""}, {"name": "The Political Underpinnings of Prosperity and Poverty \u2013 Fergusson & Querub\u00edn & Robinson \u2013 Summer 2020 \u2013 Universidad de los Andes.pdf", "univ": ""}]'>
+            <div class="bar-clip">
+              <div class="bar" style="width:50.0%; background:rgb(117,171,202);">
+                <span class="bar-count">3</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="label">
+            <span class="author">Khwaja & Mian (2005)</span>
+            <span class="title">Do Lenders Favor Politically Connected Firms? Rent Provision in an Emerging Financial Market</span>
+          </div>
+          <div class="bar-wrap" data-syllabi='[{"name": "Political Economy and Institutions \u2013 Ferraz \u2013 Spring 2021 \u2013 University of British Columbia.pdf", "univ": ""}, {"name": "Political Economy of Institutions and Development \u2013 Acemoglu & Garcia-Jimeno \u2013 Spring 2017 \u2013 Massachusetts Institute of Technology.pdf", "univ": ""}, {"name": "The Political Economy of Development \u2013 Blattman & Montero \u2013 Spring 2023 \u2013 University of Chicago.pdf", "univ": ""}]'>
+            <div class="bar-clip">
+              <div class="bar" style="width:50.0%; background:rgb(117,171,202);">
+                <span class="bar-count">3</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="label">
+            <span class="author">Yanagizawa-Drott (2014)</span>
+            <span class="title">Propaganda and Conflict: Evidence From the Rwandan Genocide</span>
+          </div>
+          <div class="bar-wrap" data-syllabi='[{"name": "Political Economy and Institutions \u2013 Ferraz \u2013 Spring 2021 \u2013 University of British Columbia.pdf", "univ": ""}, {"name": "Political Economy of Development \u2013 Humphreys \u2013 Fall 2018 \u2013 Columbia University.pdf", "univ": ""}, {"name": "The Political Economy of Development \u2013 Blattman & Montero \u2013 Spring 2023 \u2013 University of Chicago.pdf", "univ": ""}]'>
+            <div class="bar-clip">
+              <div class="bar" style="width:50.0%; background:rgb(117,171,202);">
+                <span class="bar-count">3</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="label">
+            <span class="author">North & Weingast (1989)</span>
+            <span class="title">Constitutions and Commitment: The Evolution of Institutions Governing Public Choice in Seventeenth-Century England</span>
+          </div>
+          <div class="bar-wrap" data-syllabi='[{"name": "Political Economy of Development \u2013 Humphreys \u2013 Fall 2018 \u2013 Columbia University.pdf", "univ": ""}, {"name": "Political Economy of Institutions and Development \u2013 Acemoglu & Garcia-Jimeno \u2013 Spring 2017 \u2013 Massachusetts Institute of Technology.pdf", "univ": ""}, {"name": "State Capacity \u2013 Martinez \u2013 Spring 2025 \u2013 Emory University.pdf", "univ": ""}]'>
+            <div class="bar-clip">
+              <div class="bar" style="width:50.0%; background:rgb(117,171,202);">
+                <span class="bar-count">3</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="label">
+            <span class="author">Michalopoulos & Papaioannou (2013)</span>
+            <span class="title">Pre-Colonial Ethnic Institutions and Contemporary African Development</span>
+          </div>
+          <div class="bar-wrap" data-syllabi='[{"name": "Political Economy of Development \u2013 Humphreys \u2013 Fall 2018 \u2013 Columbia University.pdf", "univ": ""}, {"name": "Political Economy of Institutions and Development \u2013 Acemoglu & Garcia-Jimeno \u2013 Spring 2017 \u2013 Massachusetts Institute of Technology.pdf", "univ": ""}, {"name": "The Political Economy of Development \u2013 Blattman & Montero \u2013 Spring 2023 \u2013 University of Chicago.pdf", "univ": ""}]'>
+            <div class="bar-clip">
+              <div class="bar" style="width:50.0%; background:rgb(117,171,202);">
+                <span class="bar-count">3</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="label">
+            <span class="author">Francois et al. (2015)</span>
+            <span class="title">How Is Power Shared in Africa?</span>
+          </div>
+          <div class="bar-wrap" data-syllabi='[{"name": "Political Economy of Development \u2013 Humphreys \u2013 Fall 2018 \u2013 Columbia University.pdf", "univ": ""}, {"name": "Political Economy of Institutions and Development \u2013 Acemoglu & Garcia-Jimeno \u2013 Spring 2017 \u2013 Massachusetts Institute of Technology.pdf", "univ": ""}, {"name": "The Political Economy of Development \u2013 Blattman & Montero \u2013 Spring 2023 \u2013 University of Chicago.pdf", "univ": ""}]'>
+            <div class="bar-clip">
+              <div class="bar" style="width:50.0%; background:rgb(117,171,202);">
+                <span class="bar-count">3</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="label">
+            <span class="author">Rasul & Rogger (2018)</span>
+            <span class="title">Management of Bureaucrats and Public Service Delivery: Evidence From the Nigerian Civil Service</span>
+          </div>
+          <div class="bar-wrap" data-syllabi='[{"name": "Political Economy of Development \u2013 Humphreys \u2013 Fall 2018 \u2013 Columbia University.pdf", "univ": ""}, {"name": "Political Economy of Institutions and Development \u2013 Acemoglu & Garcia-Jimeno \u2013 Spring 2017 \u2013 Massachusetts Institute of Technology.pdf", "univ": ""}, {"name": "State Capacity \u2013 Martinez \u2013 Spring 2025 \u2013 Emory University.pdf", "univ": ""}]'>
+            <div class="bar-clip">
+              <div class="bar" style="width:50.0%; background:rgb(117,171,202);">
+                <span class="bar-count">3</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="label">
+            <span class="author">Chiovelli et al. (2025)</span>
+            <span class="title">Bourbon Reforms and State Capacity in the Spanish Empire</span>
+          </div>
+          <div class="bar-wrap" data-syllabi='[{"name": "State Capacity \u2013 Martinez \u2013 Spring 2025 \u2013 Emory University.pdf", "univ": ""}, {"name": "The Political Economy of Development \u2013 Blattman & Montero \u2013 Spring 2023 \u2013 University of Chicago.pdf", "univ": ""}, {"name": "Topics in Political Economy \u2013 Fergusson & Xefteris \u2013 Fall \u2013 Universitat de Barcelona.pdf", "univ": ""}]'>
+            <div class="bar-clip">
+              <div class="bar" style="width:50.0%; background:rgb(117,171,202);">
+                <span class="bar-count">3</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="label">
+            <span class="author">Tilly (1985)</span>
+            <span class="title">War Making and State Making as Organized Crime</span>
+          </div>
+          <div class="bar-wrap" data-syllabi='[{"name": "Political Economy of Institutions and Development \u2013 Acemoglu & Garcia-Jimeno \u2013 Spring 2017 \u2013 Massachusetts Institute of Technology.pdf", "univ": ""}, {"name": "State Capacity \u2013 Martinez \u2013 Spring 2025 \u2013 Emory University.pdf", "univ": ""}, {"name": "The Political Economy of Development \u2013 Blattman & Montero \u2013 Spring 2023 \u2013 University of Chicago.pdf", "univ": ""}]'>
+            <div class="bar-clip">
+              <div class="bar" style="width:50.0%; background:rgb(117,171,202);">
+                <span class="bar-count">3</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="label">
+            <span class="author">Acemoglu et al. (2002)</span>
+            <span class="title">Reversal of Fortune: Geography and Institutions in the Making of the Modern World Income Distribution</span>
+          </div>
+          <div class="bar-wrap" data-syllabi='[{"name": "Economic Development Theory and Evidence \u2013 Ferrara & Rodrik \u2013 Fall 2025 \u2013 Harvard University.pdf", "univ": ""}, {"name": "Political Economy of Development \u2013 Humphreys \u2013 Fall 2018 \u2013 Columbia University.pdf", "univ": ""}, {"name": "Political Economy of Institutions and Development \u2013 Acemoglu & Garcia-Jimeno \u2013 Spring 2017 \u2013 Massachusetts Institute of Technology.pdf", "univ": ""}]'>
+            <div class="bar-clip">
+              <div class="bar" style="width:50.0%; background:rgb(117,171,202);">
+                <span class="bar-count">3</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="label">
+            <span class="author">Madestam et al. (2013)</span>
+            <span class="title">Do Political Protests Matter? Evidence From the Tea Party Movement</span>
+          </div>
+          <div class="bar-wrap" data-syllabi='[{"name": "Econom\u00eda Pol\u00edtica \u2013 Fergusson \u2013 Fall 2026 \u2013 Universidad de los Andes.pdf", "univ": ""}, {"name": "Political Economy of Institutions and Development \u2013 Acemoglu & Garcia-Jimeno \u2013 Spring 2017 \u2013 Massachusetts Institute of Technology.pdf", "univ": ""}, {"name": "Topics in Political Economy \u2013 Fergusson & Xefteris \u2013 Fall \u2013 Universitat de Barcelona.pdf", "univ": ""}]'>
+            <div class="bar-clip">
+              <div class="bar" style="width:50.0%; background:rgb(117,171,202);">
+                <span class="bar-count">3</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="label">
+            <span class="author">Enikolopov et al. (2020)</span>
+            <span class="title">Social Media and Protest Participation: Evidence From Russia</span>
+          </div>
+          <div class="bar-wrap" data-syllabi='[{"name": "Econom\u00eda Pol\u00edtica \u2013 Fergusson \u2013 Fall 2026 \u2013 Universidad de los Andes.pdf", "univ": ""}, {"name": "Political Economy and Institutions \u2013 Ferraz \u2013 Spring 2021 \u2013 University of British Columbia.pdf", "univ": ""}, {"name": "Topics in Political Economy \u2013 Fergusson & Xefteris \u2013 Fall \u2013 Universitat de Barcelona.pdf", "univ": ""}]'>
+            <div class="bar-clip">
+              <div class="bar" style="width:50.0%; background:rgb(117,171,202);">
+                <span class="bar-count">3</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="label">
+            <span class="author">Manacorda & Tesei (2020)</span>
+            <span class="title">Liberation Technology: Mobile Phones and Political Mobilization in Africa</span>
+          </div>
+          <div class="bar-wrap" data-syllabi='[{"name": "Econom\u00eda Pol\u00edtica \u2013 Fergusson \u2013 Fall 2026 \u2013 Universidad de los Andes.pdf", "univ": ""}, {"name": "Political Economy and Institutions \u2013 Ferraz \u2013 Spring 2021 \u2013 University of British Columbia.pdf", "univ": ""}, {"name": "Topics in Political Economy \u2013 Fergusson & Xefteris \u2013 Fall \u2013 Universitat de Barcelona.pdf", "univ": ""}]'>
+            <div class="bar-clip">
+              <div class="bar" style="width:50.0%; background:rgb(117,171,202);">
+                <span class="bar-count">3</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="label">
+            <span class="author">Nunn & Wantchekon (2011)</span>
+            <span class="title">The Slave Trade and the Origins of Mistrust in Africa</span>
+          </div>
+          <div class="bar-wrap" data-syllabi='[{"name": "Economic Development Theory and Evidence \u2013 Ferrara & Rodrik \u2013 Fall 2025 \u2013 Harvard University.pdf", "univ": ""}, {"name": "The Political Economy of Development \u2013 Blattman & Montero \u2013 Spring 2023 \u2013 University of Chicago.pdf", "univ": ""}, {"name": "The Political Underpinnings of Prosperity and Poverty \u2013 Fergusson & Querub\u00edn & Robinson \u2013 Summer 2020 \u2013 Universidad de los Andes.pdf", "univ": ""}]'>
+            <div class="bar-clip">
+              <div class="bar" style="width:50.0%; background:rgb(117,171,202);">
+                <span class="bar-count">3</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="label">
+            <span class="author">Fergusson et al. (2021)</span>
+            <span class="title">The Weak State Trap</span>
+          </div>
+          <div class="bar-wrap" data-syllabi='[{"name": "Econom\u00eda Pol\u00edtica \u2013 Fergusson \u2013 Fall 2026 \u2013 Universidad de los Andes.pdf", "univ": ""}, {"name": "The Political Underpinnings of Prosperity and Poverty \u2013 Fergusson & Querub\u00edn & Robinson \u2013 Summer 2020 \u2013 Universidad de los Andes.pdf", "univ": ""}, {"name": "Topics in Political Economy \u2013 Fergusson & Xefteris \u2013 Fall \u2013 Universitat de Barcelona.pdf", "univ": ""}]'>
+            <div class="bar-clip">
+              <div class="bar" style="width:50.0%; background:rgb(117,171,202);">
+                <span class="bar-count">3</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="label">
+            <span class="author">Banerjee & Iyer (2005)</span>
+            <span class="title">History, Institutions, and Economic Performance: The Legacy of Colonial Land Tenure Systems in India</span>
+          </div>
+          <div class="bar-wrap" data-syllabi='[{"name": "Economic Development Theory and Evidence \u2013 Ferrara & Rodrik \u2013 Fall 2025 \u2013 Harvard University.pdf", "univ": ""}, {"name": "Political Economy of Development \u2013 Humphreys \u2013 Fall 2018 \u2013 Columbia University.pdf", "univ": ""}, {"name": "Political Economy of Institutions and Development \u2013 Acemoglu & Garcia-Jimeno \u2013 Spring 2017 \u2013 Massachusetts Institute of Technology.pdf", "univ": ""}]'>
+            <div class="bar-clip">
+              <div class="bar" style="width:50.0%; background:rgb(117,171,202);">
+                <span class="bar-count">3</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="label">
+            <span class="author">Xu (2018)</span>
+            <span class="title">The Costs of Patronage: Evidence From the British Empire</span>
+          </div>
+          <div class="bar-wrap" data-syllabi='[{"name": "State Capacity \u2013 Martinez \u2013 Spring 2025 \u2013 Emory University.pdf", "univ": ""}, {"name": "The Political Underpinnings of Prosperity and Poverty \u2013 Fergusson & Querub\u00edn & Robinson \u2013 Summer 2020 \u2013 Universidad de los Andes.pdf", "univ": ""}]'>
+            <div class="bar-clip">
+              <div class="bar" style="width:33.3%; background:rgb(147,196,224);">
+                <span class="bar-count">2</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="label">
+            <span class="author">Alesina et al. (2004)</span>
+            <span class="title">Political Jurisdictions in Heterogeneous Communities</span>
+          </div>
+          <div class="bar-wrap" data-syllabi='[{"name": "Political Economy of Institutions and Development \u2013 Acemoglu & Garcia-Jimeno \u2013 Spring 2017 \u2013 Massachusetts Institute of Technology.pdf", "univ": ""}, {"name": "Topics in Political Economy \u2013 Fergusson & Xefteris \u2013 Fall \u2013 Universitat de Barcelona.pdf", "univ": ""}]'>
+            <div class="bar-clip">
+              <div class="bar" style="width:33.3%; background:rgb(147,196,224);">
+                <span class="bar-count">2</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="label">
+            <span class="author">Fergusson et al. (2013)</span>
+            <span class="title">Sunlight Disinfects? Free Media in Weak Democracies</span>
+          </div>
+          <div class="bar-wrap" data-syllabi='[{"name": "The Political Underpinnings of Prosperity and Poverty \u2013 Fergusson & Querub\u00edn & Robinson \u2013 Summer 2020 \u2013 Universidad de los Andes.pdf", "univ": ""}, {"name": "Topics in Political Economy \u2013 Fergusson & Xefteris \u2013 Fall \u2013 Universitat de Barcelona.pdf", "univ": ""}]'>
+            <div class="bar-clip">
+              <div class="bar" style="width:33.3%; background:rgb(147,196,224);">
+                <span class="bar-count">2</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="label">
+            <span class="author">Banerjee et al. (2008)</span>
+            <span class="title">Public Action for Public Goods</span>
+          </div>
+          <div class="bar-wrap" data-syllabi='[{"name": "Political Economy of Institutions and Development \u2013 Acemoglu & Garcia-Jimeno \u2013 Spring 2017 \u2013 Massachusetts Institute of Technology.pdf", "univ": ""}, {"name": "Topics in Political Economy \u2013 Fergusson & Xefteris \u2013 Fall \u2013 Universitat de Barcelona.pdf", "univ": ""}]'>
+            <div class="bar-clip">
+              <div class="bar" style="width:33.3%; background:rgb(147,196,224);">
+                <span class="bar-count">2</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="label">
+            <span class="author">Banerjee et al. (2001)</span>
+            <span class="title">Inequality, Control Rights, and Rent-Seeking: Sugar Cooperatives in Maharashtra</span>
+          </div>
+          <div class="bar-wrap" data-syllabi='[{"name": "Political Economy of Institutions and Development \u2013 Acemoglu & Garcia-Jimeno \u2013 Spring 2017 \u2013 Massachusetts Institute of Technology.pdf", "univ": ""}, {"name": "Topics in Political Economy \u2013 Fergusson & Xefteris \u2013 Fall \u2013 Universitat de Barcelona.pdf", "univ": ""}]'>
+            <div class="bar-clip">
+              <div class="bar" style="width:33.3%; background:rgb(147,196,224);">
+                <span class="bar-count">2</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="label">
+            <span class="author">Alesina & La Ferrara (2000)</span>
+            <span class="title">Participation in Heterogeneous Communities</span>
+          </div>
+          <div class="bar-wrap" data-syllabi='[{"name": "Political Economy of Institutions and Development \u2013 Acemoglu & Garcia-Jimeno \u2013 Spring 2017 \u2013 Massachusetts Institute of Technology.pdf", "univ": ""}, {"name": "Topics in Political Economy \u2013 Fergusson & Xefteris \u2013 Fall \u2013 Universitat de Barcelona.pdf", "univ": ""}]'>
+            <div class="bar-clip">
+              <div class="bar" style="width:33.3%; background:rgb(147,196,224);">
+                <span class="bar-count">2</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="label">
+            <span class="author">Casey et al. (2012)</span>
+            <span class="title">Reshaping Institutions: Evidence on Aid Impacts Using a Pre-Analysis Plan</span>
+          </div>
+          <div class="bar-wrap" data-syllabi='[{"name": "Political Economy of Institutions and Development \u2013 Acemoglu & Garcia-Jimeno \u2013 Spring 2017 \u2013 Massachusetts Institute of Technology.pdf", "univ": ""}, {"name": "Topics in Political Economy \u2013 Fergusson & Xefteris \u2013 Fall \u2013 Universitat de Barcelona.pdf", "univ": ""}]'>
+            <div class="bar-clip">
+              <div class="bar" style="width:33.3%; background:rgb(147,196,224);">
+                <span class="bar-count">2</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="label">
+            <span class="author">Bursztyn et al. (2020)</span>
+            <span class="title">Misperceived Social Norms: Female Labor Force Participation in Saudi Arabia</span>
+          </div>
+          <div class="bar-wrap" data-syllabi='[{"name": "The Political Economy of Development \u2013 Blattman & Montero \u2013 Spring 2023 \u2013 University of Chicago.pdf", "univ": ""}, {"name": "The Political Underpinnings of Prosperity and Poverty \u2013 Fergusson & Querub\u00edn & Robinson \u2013 Summer 2020 \u2013 Universidad de los Andes.pdf", "univ": ""}]'>
+            <div class="bar-clip">
+              <div class="bar" style="width:33.3%; background:rgb(147,196,224);">
+                <span class="bar-count">2</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="label">
+            <span class="author">Dippel (2014)</span>
+            <span class="title">Forced Coexistence and Economic Development: Evidence From Native American Reservations</span>
+          </div>
+          <div class="bar-wrap" data-syllabi='[{"name": "Political Economy of Institutions and Development \u2013 Acemoglu & Garcia-Jimeno \u2013 Spring 2017 \u2013 Massachusetts Institute of Technology.pdf", "univ": ""}, {"name": "Topics in Political Economy \u2013 Fergusson & Xefteris \u2013 Fall \u2013 Universitat de Barcelona.pdf", "univ": ""}]'>
+            <div class="bar-clip">
+              <div class="bar" style="width:33.3%; background:rgb(147,196,224);">
+                <span class="bar-count">2</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="label">
+            <span class="author">McMillan & Zoido (2004)</span>
+            <span class="title">How to Subvert Democracy: Montesinos in Peru</span>
+          </div>
+          <div class="bar-wrap" data-syllabi='[{"name": "The Political Economy of Development \u2013 Blattman & Montero \u2013 Spring 2023 \u2013 University of Chicago.pdf", "univ": ""}, {"name": "The Political Underpinnings of Prosperity and Poverty \u2013 Fergusson & Querub\u00edn & Robinson \u2013 Summer 2020 \u2013 Universidad de los Andes.pdf", "univ": ""}]'>
+            <div class="bar-clip">
+              <div class="bar" style="width:33.3%; background:rgb(147,196,224);">
+                <span class="bar-count">2</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="label">
+            <span class="author">Acemoglu et al. (n.d.)</span>
+            <span class="title">The Perils of High-Powered Incentives: Evidence From Colombia's False Positives</span>
+          </div>
+          <div class="bar-wrap" data-syllabi='[{"name": "The Political Underpinnings of Prosperity and Poverty \u2013 Fergusson & Querub\u00edn & Robinson \u2013 Summer 2020 \u2013 Universidad de los Andes.pdf", "univ": ""}, {"name": "Topics in Political Economy \u2013 Fergusson & Xefteris \u2013 Fall \u2013 Universitat de Barcelona.pdf", "univ": ""}]'>
+            <div class="bar-clip">
+              <div class="bar" style="width:33.3%; background:rgb(147,196,224);">
+                <span class="bar-count">2</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="label">
+            <span class="author">Acemoglu et al. (2014)</span>
+            <span class="title">The Power of the Street: Evidence From Egypt's Arab Spring</span>
+          </div>
+          <div class="bar-wrap" data-syllabi='[{"name": "Political Economy of Institutions and Development \u2013 Acemoglu & Garcia-Jimeno \u2013 Spring 2017 \u2013 Massachusetts Institute of Technology.pdf", "univ": ""}, {"name": "Topics in Political Economy \u2013 Fergusson & Xefteris \u2013 Fall \u2013 Universitat de Barcelona.pdf", "univ": ""}]'>
+            <div class="bar-clip">
+              <div class="bar" style="width:33.3%; background:rgb(147,196,224);">
+                <span class="bar-count">2</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="label">
+            <span class="author">Alesina et al. (1999)</span>
+            <span class="title">Public Goods and Ethnic Divisions</span>
+          </div>
+          <div class="bar-wrap" data-syllabi='[{"name": "Political Economy of Institutions and Development \u2013 Acemoglu & Garcia-Jimeno \u2013 Spring 2017 \u2013 Massachusetts Institute of Technology.pdf", "univ": ""}, {"name": "Topics in Political Economy \u2013 Fergusson & Xefteris \u2013 Fall \u2013 Universitat de Barcelona.pdf", "univ": ""}]'>
+            <div class="bar-clip">
+              <div class="bar" style="width:33.3%; background:rgb(147,196,224);">
+                <span class="bar-count">2</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="label">
+            <span class="author">Esteban & Ray (2001)</span>
+            <span class="title">Collective Action and the Group Size Paradox</span>
+          </div>
+          <div class="bar-wrap" data-syllabi='[{"name": "Political Economy of Institutions and Development \u2013 Acemoglu & Garcia-Jimeno \u2013 Spring 2017 \u2013 Massachusetts Institute of Technology.pdf", "univ": ""}, {"name": "Topics in Political Economy \u2013 Fergusson & Xefteris \u2013 Fall \u2013 Universitat de Barcelona.pdf", "univ": ""}]'>
+            <div class="bar-clip">
+              <div class="bar" style="width:33.3%; background:rgb(147,196,224);">
+                <span class="bar-count">2</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="label">
+            <span class="author">Bates (1981)</span>
+            <span class="title">Markets and States in Tropical Africa</span>
+          </div>
+          <div class="bar-wrap" data-syllabi='[{"name": "Political Economy of Institutions and Development \u2013 Acemoglu & Garcia-Jimeno \u2013 Spring 2017 \u2013 Massachusetts Institute of Technology.pdf", "univ": ""}, {"name": "The Political Underpinnings of Prosperity and Poverty \u2013 Fergusson & Querub\u00edn & Robinson \u2013 Summer 2020 \u2013 Universidad de los Andes.pdf", "univ": ""}]'>
+            <div class="bar-clip">
+              <div class="bar" style="width:33.3%; background:rgb(147,196,224);">
+                <span class="bar-count">2</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="label">
+            <span class="author">Heldring (2016)</span>
+            <span class="title">Violence and the State: Evidence From Rwanda's Decade of Atrocities</span>
+          </div>
+          <div class="bar-wrap" data-syllabi='[{"name": "Political Economy of Institutions and Development \u2013 Acemoglu & Garcia-Jimeno \u2013 Spring 2017 \u2013 Massachusetts Institute of Technology.pdf", "univ": ""}, {"name": "The Political Economy of Development \u2013 Blattman & Montero \u2013 Spring 2023 \u2013 University of Chicago.pdf", "univ": ""}]'>
+            <div class="bar-clip">
+              <div class="bar" style="width:33.3%; background:rgb(147,196,224);">
+                <span class="bar-count">2</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="label">
+            <span class="author">Tabellini (2008)</span>
+            <span class="title">The Scope of Cooperation: Values and Incentives</span>
+          </div>
+          <div class="bar-wrap" data-syllabi='[{"name": "Political Economy of Institutions and Development \u2013 Acemoglu & Garcia-Jimeno \u2013 Spring 2017 \u2013 Massachusetts Institute of Technology.pdf", "univ": ""}, {"name": "The Political Economy of Development \u2013 Blattman & Montero \u2013 Spring 2023 \u2013 University of Chicago.pdf", "univ": ""}]'>
+            <div class="bar-clip">
+              <div class="bar" style="width:33.3%; background:rgb(147,196,224);">
+                <span class="bar-count">2</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="label">
+            <span class="author">Greif (1994)</span>
+            <span class="title">Cultural Beliefs and the Organization of Society: A Historical and Theoretical Reflection on Collectivist and Individualist Societies</span>
+          </div>
+          <div class="bar-wrap" data-syllabi='[{"name": "Political Economy of Institutions and Development \u2013 Acemoglu & Garcia-Jimeno \u2013 Spring 2017 \u2013 Massachusetts Institute of Technology.pdf", "univ": ""}, {"name": "The Political Economy of Development \u2013 Blattman & Montero \u2013 Spring 2023 \u2013 University of Chicago.pdf", "univ": ""}]'>
+            <div class="bar-clip">
+              <div class="bar" style="width:33.3%; background:rgb(147,196,224);">
+                <span class="bar-count">2</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="label">
+            <span class="author">Acemoglu & Wolitzky (2014)</span>
+            <span class="title">Cycles of Conflict: An Economic Model</span>
+          </div>
+          <div class="bar-wrap" data-syllabi='[{"name": "Political Economy of Institutions and Development \u2013 Acemoglu & Garcia-Jimeno \u2013 Spring 2017 \u2013 Massachusetts Institute of Technology.pdf", "univ": ""}, {"name": "The Political Economy of Development \u2013 Blattman & Montero \u2013 Spring 2023 \u2013 University of Chicago.pdf", "univ": ""}]'>
+            <div class="bar-clip">
+              <div class="bar" style="width:33.3%; background:rgb(147,196,224);">
+                <span class="bar-count">2</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="label">
+            <span class="author">Besley & Persson (2011)</span>
+            <span class="title">Pillars of Prosperity: The Political Economics of Development Clusters</span>
+          </div>
+          <div class="bar-wrap" data-syllabi='[{"name": "Political Economy of Institutions and Development \u2013 Acemoglu & Garcia-Jimeno \u2013 Spring 2017 \u2013 Massachusetts Institute of Technology.pdf", "univ": ""}, {"name": "State Capacity \u2013 Martinez \u2013 Spring 2025 \u2013 Emory University.pdf", "univ": ""}]'>
+            <div class="bar-clip">
+              <div class="bar" style="width:33.3%; background:rgb(147,196,224);">
+                <span class="bar-count">2</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="label">
+            <span class="author">Fergusson (2019)</span>
+            <span class="title">Who Wants Violence? the Political Economy of Conflict and State Building in Colombia</span>
+          </div>
+          <div class="bar-wrap" data-syllabi='[{"name": "The Political Underpinnings of Prosperity and Poverty \u2013 Fergusson & Querub\u00edn & Robinson \u2013 Summer 2020 \u2013 Universidad de los Andes.pdf", "univ": ""}, {"name": "Topics in Political Economy \u2013 Fergusson & Xefteris \u2013 Fall \u2013 Universitat de Barcelona.pdf", "univ": ""}]'>
+            <div class="bar-clip">
+              <div class="bar" style="width:33.3%; background:rgb(147,196,224);">
+                <span class="bar-count">2</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="label">
+            <span class="author">Gambetta (1996)</span>
+            <span class="title">The Sicilian Mafia: The Business of Private Protection</span>
+          </div>
+          <div class="bar-wrap" data-syllabi='[{"name": "The Political Economy of Development \u2013 Blattman & Montero \u2013 Spring 2023 \u2013 University of Chicago.pdf", "univ": ""}, {"name": "The Logics of Violence Rebels, Criminal Groups, and the State \u2013 Magaloni \u2013 Fall 2025 \u2013 Stanford University", "univ": ""}]'>
+            <div class="bar-clip">
+              <div class="bar" style="width:33.3%; background:rgb(147,196,224);">
+                <span class="bar-count">2</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="label">
+            <span class="author">Humphreys et al. (2014)</span>
+            <span class="title">Social Engineering in the Tropics: A Grassroots Democratization Experiment in Eastern Congo</span>
+          </div>
+          <div class="bar-wrap" data-syllabi='[{"name": "Political Economy of Institutions and Development \u2013 Acemoglu & Garcia-Jimeno \u2013 Spring 2017 \u2013 Massachusetts Institute of Technology.pdf", "univ": ""}, {"name": "Topics in Political Economy \u2013 Fergusson & Xefteris \u2013 Fall \u2013 Universitat de Barcelona.pdf", "univ": ""}]'>
+            <div class="bar-clip">
+              <div class="bar" style="width:33.3%; background:rgb(147,196,224);">
+                <span class="bar-count">2</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="label">
+            <span class="author">Paluck & Green (2009)</span>
+            <span class="title">Deference, Dissent, and Dispute Resolution: An Experimental Intervention Using Mass Media to Change Norms and Behavior in Rwanda</span>
+          </div>
+          <div class="bar-wrap" data-syllabi='[{"name": "The Political Economy of Development \u2013 Blattman & Montero \u2013 Spring 2023 \u2013 University of Chicago.pdf", "univ": ""}, {"name": "Topics in Political Economy \u2013 Fergusson & Xefteris \u2013 Fall \u2013 Universitat de Barcelona.pdf", "univ": ""}]'>
+            <div class="bar-clip">
+              <div class="bar" style="width:33.3%; background:rgb(147,196,224);">
+                <span class="bar-count">2</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="label">
+            <span class="author">Sviatschi (2022)</span>
+            <span class="title">Spreading Gangs: Exporting US Criminal Capital to El Salvador</span>
+          </div>
+          <div class="bar-wrap" data-syllabi='[{"name": "The Logics of Violence Rebels, Criminal Groups, and the State \u2013 Magaloni \u2013 Fall 2025 \u2013 Stanford University.pdf", "univ": ""}, {"name": "The Political Economy of Development \u2013 Blattman & Montero \u2013 Spring 2023 \u2013 University of Chicago.pdf", "univ": ""}]'>
+            <div class="bar-clip">
+              <div class="bar" style="width:33.3%; background:rgb(147,196,224);">
+                <span class="bar-count">2</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="label">
+            <span class="author">Berman et al. (2017)</span>
+            <span class="title">This Mine Is Mine! How Minerals Fuel Conflicts in Africa</span>
+          </div>
+          <div class="bar-wrap" data-syllabi='[{"name": "The Logics of Violence Rebels, Criminal Groups, and the State \u2013 Magaloni \u2013 Fall 2025 \u2013 Stanford University.pdf", "univ": ""}, {"name": "The Political Economy of Development \u2013 Blattman & Montero \u2013 Spring 2023 \u2013 University of Chicago.pdf", "univ": ""}]'>
+            <div class="bar-clip">
+              <div class="bar" style="width:33.3%; background:rgb(147,196,224);">
+                <span class="bar-count">2</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="label">
+            <span class="author">Guidolin & La Ferrara (2007)</span>
+            <span class="title">Diamonds Are Forever, Wars Are Not: Is Conflict Bad for Private Firms?</span>
+          </div>
+          <div class="bar-wrap" data-syllabi='[{"name": "Political Economy of Institutions and Development \u2013 Acemoglu & Garcia-Jimeno \u2013 Spring 2017 \u2013 Massachusetts Institute of Technology.pdf", "univ": ""}, {"name": "Topics in Political Economy \u2013 Fergusson & Xefteris \u2013 Fall \u2013 Universitat de Barcelona.pdf", "univ": ""}]'>
+            <div class="bar-clip">
+              <div class="bar" style="width:33.3%; background:rgb(147,196,224);">
+                <span class="bar-count">2</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="label">
+            <span class="author">Bazzi & Blattman (2014)</span>
+            <span class="title">Economic Shocks and Conflict: Evidence From Commodity Prices</span>
+          </div>
+          <div class="bar-wrap" data-syllabi='[{"name": "The Logics of Violence Rebels, Criminal Groups, and the State \u2013 Magaloni \u2013 Fall 2025 \u2013 Stanford University.pdf", "univ": ""}, {"name": "The Political Economy of Development \u2013 Blattman & Montero \u2013 Spring 2023 \u2013 University of Chicago.pdf", "univ": ""}]'>
+            <div class="bar-clip">
+              <div class="bar" style="width:33.3%; background:rgb(147,196,224);">
+                <span class="bar-count">2</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="label">
+            <span class="author">DiTraglia & Garcia-Jimeno (2017)</span>
+            <span class="title">Forced Displacement and De Facto Land Reform in Rural Colombia</span>
+          </div>
+          <div class="bar-wrap" data-syllabi='[{"name": "Political Economy of Institutions and Development \u2013 Acemoglu & Garcia-Jimeno \u2013 Spring 2017 \u2013 Massachusetts Institute of Technology.pdf", "univ": ""}, {"name": "Topics in Political Economy \u2013 Fergusson & Xefteris \u2013 Fall \u2013 Universitat de Barcelona.pdf", "univ": ""}]'>
+            <div class="bar-clip">
+              <div class="bar" style="width:33.3%; background:rgb(147,196,224);">
+                <span class="bar-count">2</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="label">
+            <span class="author">Di Tella et al. (2006)</span>
+            <span class="title">Plata O Plomo: Bribe and Punishment in a Theory of Political Influence</span>
+          </div>
+          <div class="bar-wrap" data-syllabi='[{"name": "Political Economy of Institutions and Development \u2013 Acemoglu & Garcia-Jimeno \u2013 Spring 2017 \u2013 Massachusetts Institute of Technology.pdf", "univ": ""}, {"name": "Topics in Political Economy \u2013 Fergusson & Xefteris \u2013 Fall \u2013 Universitat de Barcelona.pdf", "univ": ""}]'>
+            <div class="bar-clip">
+              <div class="bar" style="width:33.3%; background:rgb(147,196,224);">
+                <span class="bar-count">2</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="label">
+            <span class="author">Dal Bo & Dal Bo (2011)</span>
+            <span class="title">Workers, Warriors, and Criminals: Social Conflict in General Equilibrium</span>
+          </div>
+          <div class="bar-wrap" data-syllabi='[{"name": "Political Economy of Institutions and Development \u2013 Acemoglu & Garcia-Jimeno \u2013 Spring 2017 \u2013 Massachusetts Institute of Technology.pdf", "univ": ""}, {"name": "Topics in Political Economy \u2013 Fergusson & Xefteris \u2013 Fall \u2013 Universitat de Barcelona.pdf", "univ": ""}]'>
+            <div class="bar-clip">
+              <div class="bar" style="width:33.3%; background:rgb(147,196,224);">
+                <span class="bar-count">2</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="label">
+            <span class="author">Bueno de Mesquita (2015)</span>
+            <span class="title">Factional Conflict and Territorial Rents</span>
+          </div>
+          <div class="bar-wrap" data-syllabi='[{"name": "Political Economy of Institutions and Development \u2013 Acemoglu & Garcia-Jimeno \u2013 Spring 2017 \u2013 Massachusetts Institute of Technology.pdf", "univ": ""}, {"name": "Topics in Political Economy \u2013 Fergusson & Xefteris \u2013 Fall \u2013 Universitat de Barcelona.pdf", "univ": ""}]'>
+            <div class="bar-clip">
+              <div class="bar" style="width:33.3%; background:rgb(147,196,224);">
+                <span class="bar-count">2</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="label">
+            <span class="author">Besley & Reynal-Querol (2012)</span>
+            <span class="title">The Legacy of Historical Conflict: Evidence From Africa</span>
+          </div>
+          <div class="bar-wrap" data-syllabi='[{"name": "Political Economy of Institutions and Development \u2013 Acemoglu & Garcia-Jimeno \u2013 Spring 2017 \u2013 Massachusetts Institute of Technology.pdf", "univ": ""}, {"name": "Topics in Political Economy \u2013 Fergusson & Xefteris \u2013 Fall \u2013 Universitat de Barcelona.pdf", "univ": ""}]'>
+            <div class="bar-clip">
+              <div class="bar" style="width:33.3%; background:rgb(147,196,224);">
+                <span class="bar-count">2</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="label">
+            <span class="author">Herbst (2000)</span>
+            <span class="title">States and Power in Africa: Comparative Lessons in Authority and Control</span>
+          </div>
+          <div class="bar-wrap" data-syllabi='[{"name": "Political Economy of Institutions and Development \u2013 Acemoglu & Garcia-Jimeno \u2013 Spring 2017 \u2013 Massachusetts Institute of Technology.pdf", "univ": ""}, {"name": "State Capacity \u2013 Martinez \u2013 Spring 2025 \u2013 Emory University.pdf", "univ": ""}]'>
+            <div class="bar-clip">
+              <div class="bar" style="width:33.3%; background:rgb(147,196,224);">
+                <span class="bar-count">2</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="label">
+            <span class="author">Levitt & Venkatesh (2000)</span>
+            <span class="title">An Economic Analysis of a Drug-Selling Gang's Finances</span>
+          </div>
+          <div class="bar-wrap" data-syllabi='[{"name": "The Logics of Violence Rebels, Criminal Groups, and the State \u2013 Magaloni \u2013 Fall 2025 \u2013 Stanford University.pdf", "univ": ""}, {"name": "The Political Economy of Development \u2013 Blattman & Montero \u2013 Spring 2023 \u2013 University of Chicago.pdf", "univ": ""}]'>
+            <div class="bar-clip">
+              <div class="bar" style="width:33.3%; background:rgb(147,196,224);">
+                <span class="bar-count">2</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="label">
+            <span class="author">Svensson (2003)</span>
+            <span class="title">Who Must Pay Bribes and How Much? Evidence From a Cross-Section of Firms</span>
+          </div>
+          <div class="bar-wrap" data-syllabi='[{"name": "Political Economy of Institutions and Development \u2013 Acemoglu & Garcia-Jimeno \u2013 Spring 2017 \u2013 Massachusetts Institute of Technology.pdf", "univ": ""}, {"name": "The Political Economy of Development \u2013 Blattman & Montero \u2013 Spring 2023 \u2013 University of Chicago.pdf", "univ": ""}]'>
+            <div class="bar-clip">
+              <div class="bar" style="width:33.3%; background:rgb(147,196,224);">
+                <span class="bar-count">2</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="label">
+            <span class="author">Fearon et al. (2011)</span>
+            <span class="title">Democratic Institutions and Collective Action Capacity</span>
+          </div>
+          <div class="bar-wrap" data-syllabi='[{"name": "Political Economy of Institutions and Development \u2013 Acemoglu & Garcia-Jimeno \u2013 Spring 2017 \u2013 Massachusetts Institute of Technology.pdf", "univ": ""}, {"name": "Topics in Political Economy \u2013 Fergusson & Xefteris \u2013 Fall \u2013 Universitat de Barcelona.pdf", "univ": ""}]'>
+            <div class="bar-clip">
+              <div class="bar" style="width:33.3%; background:rgb(147,196,224);">
+                <span class="bar-count">2</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="label">
+            <span class="author">Shleifer & Vishny (1994)</span>
+            <span class="title">Politicians and Firms</span>
+          </div>
+          <div class="bar-wrap" data-syllabi='[{"name": "Political Economy of Institutions and Development \u2013 Acemoglu & Garcia-Jimeno \u2013 Spring 2017 \u2013 Massachusetts Institute of Technology.pdf", "univ": ""}, {"name": "The Political Economy of Development \u2013 Blattman & Montero \u2013 Spring 2023 \u2013 University of Chicago.pdf", "univ": ""}]'>
+            <div class="bar-clip">
+              <div class="bar" style="width:33.3%; background:rgb(147,196,224);">
+                <span class="bar-count">2</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="label">
+            <span class="author">Bertrand et al. (2007)</span>
+            <span class="title">Obtaining a Driver's License in India: An Experimental Approach to Studying Corruption</span>
+          </div>
+          <div class="bar-wrap" data-syllabi='[{"name": "Political Economy of Institutions and Development \u2013 Acemoglu & Garcia-Jimeno \u2013 Spring 2017 \u2013 Massachusetts Institute of Technology.pdf", "univ": ""}, {"name": "The Political Economy of Development \u2013 Blattman & Montero \u2013 Spring 2023 \u2013 University of Chicago.pdf", "univ": ""}]'>
+            <div class="bar-clip">
+              <div class="bar" style="width:33.3%; background:rgb(147,196,224);">
+                <span class="bar-count">2</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="label">
+            <span class="author">Magaloni et al. (2020)</span>
+            <span class="title">Killing in the Slums: Criminal Governance, Social Order and Police Violence in Rio De Janeiro</span>
+          </div>
+          <div class="bar-wrap" data-syllabi='[{"name": "The Logics of Violence Rebels, Criminal Groups, and the State \u2013 Magaloni \u2013 Fall 2025 \u2013 Stanford University.pdf", "univ": ""}, {"name": "The Political Economy of Development \u2013 Blattman & Montero \u2013 Spring 2023 \u2013 University of Chicago.pdf", "univ": ""}]'>
+            <div class="bar-clip">
+              <div class="bar" style="width:33.3%; background:rgb(147,196,224);">
+                <span class="bar-count">2</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="label">
+            <span class="author">Lessing & Willis (2019)</span>
+            <span class="title">Legitimacy in Criminal Governance: Managing a Drug Empire From Behind Bars</span>
+          </div>
+          <div class="bar-wrap" data-syllabi='[{"name": "The Logics of Violence Rebels, Criminal Groups, and the State \u2013 Magaloni \u2013 Fall 2025 \u2013 Stanford University.pdf", "univ": ""}, {"name": "The Political Economy of Development \u2013 Blattman & Montero \u2013 Spring 2023 \u2013 University of Chicago.pdf", "univ": ""}]'>
+            <div class="bar-clip">
+              <div class="bar" style="width:33.3%; background:rgb(147,196,224);">
+                <span class="bar-count">2</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="label">
+            <span class="author">Blattman et al. (2025)</span>
+            <span class="title">Gang Rule: Understanding and Countering Criminal Governance</span>
+          </div>
+          <div class="bar-wrap" data-syllabi='[{"name": "The Logics of Violence Rebels, Criminal Groups, and the State \u2013 Magaloni \u2013 Fall 2025 \u2013 Stanford University.pdf", "univ": ""}, {"name": "The Political Economy of Development \u2013 Blattman & Montero \u2013 Spring 2023 \u2013 University of Chicago.pdf", "univ": ""}]'>
+            <div class="bar-clip">
+              <div class="bar" style="width:33.3%; background:rgb(147,196,224);">
+                <span class="bar-count">2</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="label">
+            <span class="author">Bauer et al. (2016)</span>
+            <span class="title">Can War Foster Cooperation?</span>
+          </div>
+          <div class="bar-wrap" data-syllabi='[{"name": "The Political Economy of Development \u2013 Blattman & Montero \u2013 Spring 2023 \u2013 University of Chicago.pdf", "univ": ""}, {"name": "Topics in Political Economy \u2013 Fergusson & Xefteris \u2013 Fall \u2013 Universitat de Barcelona.pdf", "univ": ""}]'>
+            <div class="bar-clip">
+              <div class="bar" style="width:33.3%; background:rgb(147,196,224);">
+                <span class="bar-count">2</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="label">
+            <span class="author">Putnam (1993)</span>
+            <span class="title">Making Democracy Work: Civic Traditions in Modern Italy</span>
+          </div>
+          <div class="bar-wrap" data-syllabi='[{"name": "Political Economy of Institutions and Development \u2013 Acemoglu & Garcia-Jimeno \u2013 Spring 2017 \u2013 Massachusetts Institute of Technology.pdf", "univ": ""}, {"name": "Topics in Political Economy \u2013 Fergusson & Xefteris \u2013 Fall \u2013 Universitat de Barcelona.pdf", "univ": ""}]'>
+            <div class="bar-clip">
+              <div class="bar" style="width:33.3%; background:rgb(147,196,224);">
+                <span class="bar-count">2</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="label">
+            <span class="author">Olson (1965)</span>
+            <span class="title">The Logic of Collective Action</span>
+          </div>
+          <div class="bar-wrap" data-syllabi='[{"name": "Political Economy of Institutions and Development \u2013 Acemoglu & Garcia-Jimeno \u2013 Spring 2017 \u2013 Massachusetts Institute of Technology.pdf", "univ": ""}, {"name": "Topics in Political Economy \u2013 Fergusson & Xefteris \u2013 Fall \u2013 Universitat de Barcelona.pdf", "univ": ""}]'>
+            <div class="bar-clip">
+              <div class="bar" style="width:33.3%; background:rgb(147,196,224);">
+                <span class="bar-count">2</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="label">
+            <span class="author">Jha & Wilkinson (2012)</span>
+            <span class="title">Veterans, Organizational Skill and Ethnic Cleansing: Evidence From the Partition of South Asia</span>
+          </div>
+          <div class="bar-wrap" data-syllabi='[{"name": "Political Economy of Institutions and Development \u2013 Acemoglu & Garcia-Jimeno \u2013 Spring 2017 \u2013 Massachusetts Institute of Technology.pdf", "univ": ""}, {"name": "Topics in Political Economy \u2013 Fergusson & Xefteris \u2013 Fall \u2013 Universitat de Barcelona.pdf", "univ": ""}]'>
+            <div class="bar-clip">
+              <div class="bar" style="width:33.3%; background:rgb(147,196,224);">
+                <span class="bar-count">2</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="label">
+            <span class="author">Collier & Hoeffler (2004)</span>
+            <span class="title">Greed and Grievance in Civil War</span>
+          </div>
+          <div class="bar-wrap" data-syllabi='[{"name": "The Logics of Violence Rebels, Criminal Groups, and the State \u2013 Magaloni \u2013 Fall 2025 \u2013 Stanford University.pdf", "univ": ""}, {"name": "The Political Economy of Development \u2013 Blattman & Montero \u2013 Spring 2023 \u2013 University of Chicago.pdf", "univ": ""}]'>
+            <div class="bar-clip">
+              <div class="bar" style="width:33.3%; background:rgb(147,196,224);">
+                <span class="bar-count">2</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="label">
+            <span class="author">Besley & Persson (2011)</span>
+            <span class="title">The Logic of Political Violence</span>
+          </div>
+          <div class="bar-wrap" data-syllabi='[{"name": "Political Economy of Institutions and Development \u2013 Acemoglu & Garcia-Jimeno \u2013 Spring 2017 \u2013 Massachusetts Institute of Technology.pdf", "univ": ""}, {"name": "Topics in Political Economy \u2013 Fergusson & Xefteris \u2013 Fall \u2013 Universitat de Barcelona.pdf", "univ": ""}]'>
+            <div class="bar-clip">
+              <div class="bar" style="width:33.3%; background:rgb(147,196,224);">
+                <span class="bar-count">2</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="label">
+            <span class="author">Angrist & Pischke (2014)</span>
+            <span class="title">Mastering 'Metrics: The Path From Cause to Effect</span>
+          </div>
+          <div class="bar-wrap" data-syllabi='[{"name": "Economic Development Theory and Evidence \u2013 Ferrara & Rodrik \u2013 Fall 2025 \u2013 Harvard University.pdf", "univ": ""}, {"name": "Econom\u00eda Pol\u00edtica \u2013 Fergusson \u2013 Fall 2026 \u2013 Universidad de los Andes.pdf", "univ": ""}]'>
+            <div class="bar-clip">
+              <div class="bar" style="width:33.3%; background:rgb(147,196,224);">
+                <span class="bar-count">2</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="label">
+            <span class="author">Fisman (2001)</span>
+            <span class="title">Estimating the Value of Political Connections</span>
+          </div>
+          <div class="bar-wrap" data-syllabi='[{"name": "Political Economy of Development \u2013 Humphreys \u2013 Fall 2018 \u2013 Columbia University.pdf", "univ": ""}, {"name": "Political Economy of Institutions and Development \u2013 Acemoglu & Garcia-Jimeno \u2013 Spring 2017 \u2013 Massachusetts Institute of Technology.pdf", "univ": ""}]'>
+            <div class="bar-clip">
+              <div class="bar" style="width:33.3%; background:rgb(147,196,224);">
+                <span class="bar-count">2</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="label">
+            <span class="author">Angrist (2008)</span>
+            <span class="title">Mostly Harmless Econometrics: An Empiricist's Companion</span>
+          </div>
+          <div class="bar-wrap" data-syllabi='[{"name": "Econom\u00eda Pol\u00edtica \u2013 Fergusson \u2013 Fall 2026 \u2013 Universidad de los Andes.pdf", "univ": ""}, {"name": "Political Economy and Institutions \u2013 Ferraz \u2013 Spring 2021 \u2013 University of British Columbia.pdf", "univ": ""}]'>
+            <div class="bar-clip">
+              <div class="bar" style="width:33.3%; background:rgb(147,196,224);">
+                <span class="bar-count">2</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="label">
+            <span class="author">Aidt & Jensen (2014)</span>
+            <span class="title">Workers of the World, Unite! Franchise Extensions and the Threat of Revolution in Europe, 1820–1938</span>
+          </div>
+          <div class="bar-wrap" data-syllabi='[{"name": "Political Economy and Institutions \u2013 Ferraz \u2013 Spring 2021 \u2013 University of British Columbia.pdf", "univ": ""}, {"name": "Political Economy of Institutions and Development \u2013 Acemoglu & Garcia-Jimeno \u2013 Spring 2017 \u2013 Massachusetts Institute of Technology.pdf", "univ": ""}]'>
+            <div class="bar-clip">
+              <div class="bar" style="width:33.3%; background:rgb(147,196,224);">
+                <span class="bar-count">2</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="label">
+            <span class="author">Acemoglu & Robinson (2000)</span>
+            <span class="title">Why Did the West Extend the Franchise? Democracy, Inequality, and Growth in Historical Perspective</span>
+          </div>
+          <div class="bar-wrap" data-syllabi='[{"name": "Political Economy and Institutions \u2013 Ferraz \u2013 Spring 2021 \u2013 University of British Columbia.pdf", "univ": ""}, {"name": "Political Economy of Institutions and Development \u2013 Acemoglu & Garcia-Jimeno \u2013 Spring 2017 \u2013 Massachusetts Institute of Technology.pdf", "univ": ""}]'>
+            <div class="bar-clip">
+              <div class="bar" style="width:33.3%; background:rgb(147,196,224);">
+                <span class="bar-count">2</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="label">
+            <span class="author">Acemoglu & Robinson (2001)</span>
+            <span class="title">A Theory of Political Transitions</span>
+          </div>
+          <div class="bar-wrap" data-syllabi='[{"name": "Political Economy and Institutions \u2013 Ferraz \u2013 Spring 2021 \u2013 University of British Columbia.pdf", "univ": ""}, {"name": "Political Economy of Development \u2013 Humphreys \u2013 Fall 2018 \u2013 Columbia University.pdf", "univ": ""}]'>
+            <div class="bar-clip">
+              <div class="bar" style="width:33.3%; background:rgb(147,196,224);">
+                <span class="bar-count">2</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="label">
+            <span class="author">Persson & Tabellini (2000)</span>
+            <span class="title">Political Economics: Explaining Economic Policy</span>
+          </div>
+          <div class="bar-wrap" data-syllabi='[{"name": "Political Economy and Institutions \u2013 Ferraz \u2013 Spring 2021 \u2013 University of British Columbia.pdf", "univ": ""}, {"name": "Political Economy of Institutions and Development \u2013 Acemoglu & Garcia-Jimeno \u2013 Spring 2017 \u2013 Massachusetts Institute of Technology.pdf", "univ": ""}]'>
+            <div class="bar-clip">
+              <div class="bar" style="width:33.3%; background:rgb(147,196,224);">
+                <span class="bar-count">2</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="label">
+            <span class="author">Bursztyn et al. (2020)</span>
+            <span class="title">From Extreme to Mainstream: The Erosion of Social Norms</span>
+          </div>
+          <div class="bar-wrap" data-syllabi='[{"name": "Econom\u00eda Pol\u00edtica \u2013 Fergusson \u2013 Fall 2026 \u2013 Universidad de los Andes.pdf", "univ": ""}, {"name": "Topics in Political Economy \u2013 Fergusson & Xefteris \u2013 Fall \u2013 Universitat de Barcelona.pdf", "univ": ""}]'>
+            <div class="bar-clip">
+              <div class="bar" style="width:33.3%; background:rgb(147,196,224);">
+                <span class="bar-count">2</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="label">
+            <span class="author">Acemoglu & Verdier (2000)</span>
+            <span class="title">The Choice Between Corruption and Market Failures</span>
+          </div>
+          <div class="bar-wrap" data-syllabi='[{"name": "Econom\u00eda Pol\u00edtica \u2013 Fergusson \u2013 Fall 2026 \u2013 Universidad de los Andes.pdf", "univ": ""}, {"name": "Political Economy of Institutions and Development \u2013 Acemoglu & Garcia-Jimeno \u2013 Spring 2017 \u2013 Massachusetts Institute of Technology.pdf", "univ": ""}]'>
+            <div class="bar-clip">
+              <div class="bar" style="width:33.3%; background:rgb(147,196,224);">
+                <span class="bar-count">2</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="label">
+            <span class="author">Fergusson et al. (2021)</span>
+            <span class="title">The Real Winner's Curse</span>
+          </div>
+          <div class="bar-wrap" data-syllabi='[{"name": "Econom\u00eda Pol\u00edtica \u2013 Fergusson \u2013 Fall 2026 \u2013 Universidad de los Andes.pdf", "univ": ""}, {"name": "The Political Underpinnings of Prosperity and Poverty \u2013 Fergusson & Querub\u00edn & Robinson \u2013 Summer 2020 \u2013 Universidad de los Andes.pdf", "univ": ""}]'>
+            <div class="bar-clip">
+              <div class="bar" style="width:33.3%; background:rgb(147,196,224);">
+                <span class="bar-count">2</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="label">
+            <span class="author">Prat & Strömberg (2013)</span>
+            <span class="title">The Political Economy of Mass Media</span>
+          </div>
+          <div class="bar-wrap" data-syllabi='[{"name": "Econom\u00eda Pol\u00edtica \u2013 Fergusson \u2013 Fall 2026 \u2013 Universidad de los Andes.pdf", "univ": ""}, {"name": "Political Economy and Institutions \u2013 Ferraz \u2013 Spring 2021 \u2013 University of British Columbia.pdf", "univ": ""}]'>
+            <div class="bar-clip">
+              <div class="bar" style="width:33.3%; background:rgb(147,196,224);">
+                <span class="bar-count">2</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="label">
+            <span class="author">Fergusson & Molina (2019)</span>
+            <span class="title">Facebook Causes Protests</span>
+          </div>
+          <div class="bar-wrap" data-syllabi='[{"name": "Econom\u00eda Pol\u00edtica \u2013 Fergusson \u2013 Fall 2026 \u2013 Universidad de los Andes.pdf", "univ": ""}, {"name": "Topics in Political Economy \u2013 Fergusson & Xefteris \u2013 Fall \u2013 Universitat de Barcelona.pdf", "univ": ""}]'>
+            <div class="bar-clip">
+              <div class="bar" style="width:33.3%; background:rgb(147,196,224);">
+                <span class="bar-count">2</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="label">
+            <span class="author">Finan & Schechter (2012)</span>
+            <span class="title">Vote-Buying and Reciprocity</span>
+          </div>
+          <div class="bar-wrap" data-syllabi='[{"name": "Econom\u00eda Pol\u00edtica \u2013 Fergusson \u2013 Fall 2026 \u2013 Universidad de los Andes.pdf", "univ": ""}, {"name": "Political Economy and Institutions \u2013 Ferraz \u2013 Spring 2021 \u2013 University of British Columbia.pdf", "univ": ""}]'>
+            <div class="bar-clip">
+              <div class="bar" style="width:33.3%; background:rgb(147,196,224);">
+                <span class="bar-count">2</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="label">
+            <span class="author">Acemoglu (2005)</span>
+            <span class="title">Constitutions, Politics, and Economics: A Review Essay on Persson and Tabellini's the Economic Effects of Constitutions</span>
+          </div>
+          <div class="bar-wrap" data-syllabi='[{"name": "Econom\u00eda Pol\u00edtica \u2013 Fergusson \u2013 Fall 2026 \u2013 Universidad de los Andes.pdf", "univ": ""}, {"name": "Political Economy of Institutions and Development \u2013 Acemoglu & Garcia-Jimeno \u2013 Spring 2017 \u2013 Massachusetts Institute of Technology.pdf", "univ": ""}]'>
+            <div class="bar-clip">
+              <div class="bar" style="width:33.3%; background:rgb(147,196,224);">
+                <span class="bar-count">2</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="label">
+            <span class="author">Ferraz et al. (2020)</span>
+            <span class="title">Political Power, Elite Control, and Long-Run Development: Evidence From Brazil</span>
+          </div>
+          <div class="bar-wrap" data-syllabi='[{"name": "Political Economy and Institutions \u2013 Ferraz \u2013 Spring 2021 \u2013 University of British Columbia.pdf", "univ": ""}, {"name": "The Political Underpinnings of Prosperity and Poverty \u2013 Fergusson & Querub\u00edn & Robinson \u2013 Summer 2020 \u2013 Universidad de los Andes.pdf", "univ": ""}]'>
+            <div class="bar-clip">
+              <div class="bar" style="width:33.3%; background:rgb(147,196,224);">
+                <span class="bar-count">2</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="label">
+            <span class="author">Cunningham (2021)</span>
+            <span class="title">Causal Inference: The Mixtape</span>
+          </div>
+          <div class="bar-wrap" data-syllabi='[{"name": "Econom\u00eda Pol\u00edtica \u2013 Fergusson \u2013 Fall 2026 \u2013 Universidad de los Andes.pdf", "univ": ""}, {"name": "Political Economy and Institutions \u2013 Ferraz \u2013 Spring 2021 \u2013 University of British Columbia.pdf", "univ": ""}]'>
+            <div class="bar-clip">
+              <div class="bar" style="width:33.3%; background:rgb(147,196,224);">
+                <span class="bar-count">2</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="label">
+            <span class="author">Fergusson & Querubín (2018)</span>
+            <span class="title">Economía Política De La Política Económica</span>
+          </div>
+          <div class="bar-wrap" data-syllabi='[{"name": "Econom\u00eda Pol\u00edtica \u2013 Fergusson \u2013 Fall 2026 \u2013 Universidad de los Andes.pdf", "univ": ""}, {"name": "The Political Underpinnings of Prosperity and Poverty \u2013 Fergusson & Querub\u00edn & Robinson \u2013 Summer 2020 \u2013 Universidad de los Andes.pdf", "univ": ""}]'>
+            <div class="bar-clip">
+              <div class="bar" style="width:33.3%; background:rgb(147,196,224);">
+                <span class="bar-count">2</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="label">
+            <span class="author">Bursztyn et al. (2020)</span>
+            <span class="title">Misperceived Social Norms: Women Working Outside the Home in Saudi Arabia</span>
+          </div>
+          <div class="bar-wrap" data-syllabi='[{"name": "Economic Development Theory and Evidence \u2013 Ferrara & Rodrik \u2013 Fall 2025 \u2013 Harvard University.pdf", "univ": ""}, {"name": "The Political Economy of Development \u2013 Blattman & Montero \u2013 Spring 2023 \u2013 University of Chicago.pdf", "univ": ""}]'>
+            <div class="bar-clip">
+              <div class="bar" style="width:33.3%; background:rgb(147,196,224);">
+                <span class="bar-count">2</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="label">
+            <span class="author">Krueger (1974)</span>
+            <span class="title">The Political Economy of the Rent-Seeking Society</span>
+          </div>
+          <div class="bar-wrap" data-syllabi='[{"name": "Economic Development Theory and Evidence \u2013 Ferrara & Rodrik \u2013 Fall 2025 \u2013 Harvard University.pdf", "univ": ""}, {"name": "Political Economy of Institutions and Development \u2013 Acemoglu & Garcia-Jimeno \u2013 Spring 2017 \u2013 Massachusetts Institute of Technology.pdf", "univ": ""}]'>
+            <div class="bar-clip">
+              <div class="bar" style="width:33.3%; background:rgb(147,196,224);">
+                <span class="bar-count">2</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="label">
+            <span class="author">Stasavage (2016)</span>
+            <span class="title">Representation and Consent: Why They Arose in Europe and Not Elsewhere</span>
+          </div>
+          <div class="bar-wrap" data-syllabi='[{"name": "Economic Development Theory and Evidence \u2013 Ferrara & Rodrik \u2013 Fall 2025 \u2013 Harvard University.pdf", "univ": ""}, {"name": "State Capacity \u2013 Martinez \u2013 Spring 2025 \u2013 Emory University.pdf", "univ": ""}]'>
+            <div class="bar-clip">
+              <div class="bar" style="width:33.3%; background:rgb(147,196,224);">
+                <span class="bar-count">2</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="label">
+            <span class="author">Olken & Pande (2012)</span>
+            <span class="title">Corruption in Developing Countries</span>
+          </div>
+          <div class="bar-wrap" data-syllabi='[{"name": "Economic Development Theory and Evidence \u2013 Ferrara & Rodrik \u2013 Fall 2025 \u2013 Harvard University.pdf", "univ": ""}, {"name": "Econom\u00eda Pol\u00edtica \u2013 Fergusson \u2013 Fall 2026 \u2013 Universidad de los Andes.pdf", "univ": ""}]'>
+            <div class="bar-clip">
+              <div class="bar" style="width:33.3%; background:rgb(147,196,224);">
+                <span class="bar-count">2</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="label">
+            <span class="author">Lane (2025)</span>
+            <span class="title">Manufacturing Revolutions: Industrial Policy and Industrialization in South Korea</span>
+          </div>
+          <div class="bar-wrap" data-syllabi='[{"name": "Economic Development Theory and Evidence \u2013 Ferrara & Rodrik \u2013 Fall 2025 \u2013 Harvard University.pdf", "univ": ""}, {"name": "Political Economy and Institutions \u2013 Ferraz \u2013 Spring 2021 \u2013 University of British Columbia.pdf", "univ": ""}]'>
+            <div class="bar-clip">
+              <div class="bar" style="width:33.3%; background:rgb(147,196,224);">
+                <span class="bar-count">2</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="label">
+            <span class="author">La Ferrara et al. (2012)</span>
+            <span class="title">Soap Operas and Fertility: Evidence From Brazil</span>
+          </div>
+          <div class="bar-wrap" data-syllabi='[{"name": "Economic Development Theory and Evidence \u2013 Ferrara & Rodrik \u2013 Fall 2025 \u2013 Harvard University.pdf", "univ": ""}, {"name": "The Political Economy of Development \u2013 Blattman & Montero \u2013 Spring 2023 \u2013 University of Chicago.pdf", "univ": ""}]'>
+            <div class="bar-clip">
+              <div class="bar" style="width:33.3%; background:rgb(147,196,224);">
+                <span class="bar-count">2</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="label">
+            <span class="author">Pascali (2017)</span>
+            <span class="title">The Wind of Change: Maritime Technology, Trade, and Economic Development</span>
+          </div>
+          <div class="bar-wrap" data-syllabi='[{"name": "Economic Development Theory and Evidence \u2013 Ferrara & Rodrik \u2013 Fall 2025 \u2013 Harvard University.pdf", "univ": ""}, {"name": "The Political Underpinnings of Prosperity and Poverty \u2013 Fergusson & Querub\u00edn & Robinson \u2013 Summer 2020 \u2013 Universidad de los Andes.pdf", "univ": ""}]'>
+            <div class="bar-clip">
+              <div class="bar" style="width:33.3%; background:rgb(147,196,224);">
+                <span class="bar-count">2</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="label">
+            <span class="author">Acemoglu et al. (2005)</span>
+            <span class="title">The Rise of Europe: Atlantic Trade, Institutional Change, and Economic Growth</span>
+          </div>
+          <div class="bar-wrap" data-syllabi='[{"name": "Economic Development Theory and Evidence \u2013 Ferrara & Rodrik \u2013 Fall 2025 \u2013 Harvard University.pdf", "univ": ""}, {"name": "The Political Underpinnings of Prosperity and Poverty \u2013 Fergusson & Querub\u00edn & Robinson \u2013 Summer 2020 \u2013 Universidad de los Andes.pdf", "univ": ""}]'>
+            <div class="bar-clip">
+              <div class="bar" style="width:33.3%; background:rgb(147,196,224);">
+                <span class="bar-count">2</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="label">
+            <span class="author">Acemoglu & Robinson (2008)</span>
+            <span class="title">Persistence of Power, Elites, and Institutions</span>
+          </div>
+          <div class="bar-wrap" data-syllabi='[{"name": "Political Economy and Institutions \u2013 Ferraz \u2013 Spring 2021 \u2013 University of British Columbia.pdf", "univ": ""}, {"name": "Political Economy of Institutions and Development \u2013 Acemoglu & Garcia-Jimeno \u2013 Spring 2017 \u2013 Massachusetts Institute of Technology.pdf", "univ": ""}]'>
+            <div class="bar-clip">
+              <div class="bar" style="width:33.3%; background:rgb(147,196,224);">
+                <span class="bar-count">2</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="label">
+            <span class="author">Hsieh et al. (2011)</span>
+            <span class="title">The Price of Political Opposition: Evidence From Venezuela's Maisanta</span>
+          </div>
+          <div class="bar-wrap" data-syllabi='[{"name": "Political Economy and Institutions \u2013 Ferraz \u2013 Spring 2021 \u2013 University of British Columbia.pdf", "univ": ""}, {"name": "Political Economy of Institutions and Development \u2013 Acemoglu & Garcia-Jimeno \u2013 Spring 2017 \u2013 Massachusetts Institute of Technology.pdf", "univ": ""}]'>
+            <div class="bar-clip">
+              <div class="bar" style="width:33.3%; background:rgb(147,196,224);">
+                <span class="bar-count">2</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="label">
+            <span class="author">Acemoglu et al. (2015)</span>
+            <span class="title">State Capacity and Economic Development: A Network Approach</span>
+          </div>
+          <div class="bar-wrap" data-syllabi='[{"name": "Political Economy of Development \u2013 Humphreys \u2013 Fall 2018 \u2013 Columbia University.pdf", "univ": ""}, {"name": "Political Economy of Institutions and Development \u2013 Acemoglu & Garcia-Jimeno \u2013 Spring 2017 \u2013 Massachusetts Institute of Technology.pdf", "univ": ""}]'>
+            <div class="bar-clip">
+              <div class="bar" style="width:33.3%; background:rgb(147,196,224);">
+                <span class="bar-count">2</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="label">
+            <span class="author">Campante et al. (2018)</span>
+            <span class="title">Politics 2.0: The Multifaceted Effect of Broadband Internet on Political Participation</span>
+          </div>
+          <div class="bar-wrap" data-syllabi='[{"name": "Political Economy and Institutions \u2013 Ferraz \u2013 Spring 2021 \u2013 University of British Columbia.pdf", "univ": ""}, {"name": "Topics in Political Economy \u2013 Fergusson & Xefteris \u2013 Fall \u2013 Universitat de Barcelona.pdf", "univ": ""}]'>
+            <div class="bar-clip">
+              <div class="bar" style="width:33.3%; background:rgb(147,196,224);">
+                <span class="bar-count">2</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="label">
+            <span class="author">Cruz et al. (2017)</span>
+            <span class="title">Politician Family Networks and Electoral Outcomes: Evidence From the Philippines</span>
+          </div>
+          <div class="bar-wrap" data-syllabi='[{"name": "Political Economy of Development \u2013 Humphreys \u2013 Fall 2018 \u2013 Columbia University.pdf", "univ": ""}, {"name": "The Political Underpinnings of Prosperity and Poverty \u2013 Fergusson & Querub\u00edn & Robinson \u2013 Summer 2020 \u2013 Universidad de los Andes.pdf", "univ": ""}]'>
+            <div class="bar-clip">
+              <div class="bar" style="width:33.3%; background:rgb(147,196,224);">
+                <span class="bar-count">2</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="label">
+            <span class="author">Rao (2014)</span>
+            <span class="title">Familiarity Does Not Breed Contempt: Generosity, Discrimination and Diversity in Delhi Schools</span>
+          </div>
+          <div class="bar-wrap" data-syllabi='[{"name": "Political Economy of Development \u2013 Humphreys \u2013 Fall 2018 \u2013 Columbia University.pdf", "univ": ""}, {"name": "The Political Economy of Development \u2013 Blattman & Montero \u2013 Spring 2023 \u2013 University of Chicago.pdf", "univ": ""}]'>
+            <div class="bar-clip">
+              <div class="bar" style="width:33.3%; background:rgb(147,196,224);">
+                <span class="bar-count">2</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="label">
+            <span class="author">Fearon & Laitin (1996)</span>
+            <span class="title">Explaining Interethnic Cooperation</span>
+          </div>
+          <div class="bar-wrap" data-syllabi='[{"name": "Political Economy of Development \u2013 Humphreys \u2013 Fall 2018 \u2013 Columbia University.pdf", "univ": ""}, {"name": "The Political Economy of Development \u2013 Blattman & Montero \u2013 Spring 2023 \u2013 University of Chicago.pdf", "univ": ""}]'>
+            <div class="bar-clip">
+              <div class="bar" style="width:33.3%; background:rgb(147,196,224);">
+                <span class="bar-count">2</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="label">
+            <span class="author">Fearon & Laitin (2003)</span>
+            <span class="title">Ethnicity, Insurgency, and Civil War</span>
+          </div>
+          <div class="bar-wrap" data-syllabi='[{"name": "Political Economy of Development \u2013 Humphreys \u2013 Fall 2018 \u2013 Columbia University.pdf", "univ": ""}, {"name": "The Logics of Violence Rebels, Criminal Groups, and the State \u2013 Magaloni \u2013 Fall 2025 \u2013 Stanford University.pdf", "univ": ""}]'>
+            <div class="bar-clip">
+              <div class="bar" style="width:33.3%; background:rgb(147,196,224);">
+                <span class="bar-count">2</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="label">
+            <span class="author">Miguel et al. (2004)</span>
+            <span class="title">Economic Shocks and Civil Conflict: An Instrumental Variables Approach</span>
+          </div>
+          <div class="bar-wrap" data-syllabi='[{"name": "Political Economy of Development \u2013 Humphreys \u2013 Fall 2018 \u2013 Columbia University.pdf", "univ": ""}, {"name": "The Political Economy of Development \u2013 Blattman & Montero \u2013 Spring 2023 \u2013 University of Chicago.pdf", "univ": ""}]'>
+            <div class="bar-clip">
+              <div class="bar" style="width:33.3%; background:rgb(147,196,224);">
+                <span class="bar-count">2</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="label">
+            <span class="author">Alesina & Rodrik (1994)</span>
+            <span class="title">Distributive Politics and Economic Growth</span>
+          </div>
+          <div class="bar-wrap" data-syllabi='[{"name": "Political Economy of Development \u2013 Humphreys \u2013 Fall 2018 \u2013 Columbia University.pdf", "univ": ""}, {"name": "Political Economy of Institutions and Development \u2013 Acemoglu & Garcia-Jimeno \u2013 Spring 2017 \u2013 Massachusetts Institute of Technology.pdf", "univ": ""}]'>
+            <div class="bar-clip">
+              <div class="bar" style="width:33.3%; background:rgb(147,196,224);">
+                <span class="bar-count">2</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="label">
+            <span class="author">Scott (1998)</span>
+            <span class="title">Seeing Like a State: How Certain Schemes to Improve the Human Condition Have Failed</span>
+          </div>
+          <div class="bar-wrap" data-syllabi='[{"name": "Political Economy of Development \u2013 Humphreys \u2013 Fall 2018 \u2013 Columbia University.pdf", "univ": ""}, {"name": "State Capacity \u2013 Martinez \u2013 Spring 2025 \u2013 Emory University.pdf", "univ": ""}]'>
+            <div class="bar-clip">
+              <div class="bar" style="width:33.3%; background:rgb(147,196,224);">
+                <span class="bar-count">2</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="label">
+            <span class="author">Athey & Imbens (2017)</span>
+            <span class="title">The State of Applied Econometrics: Causality and Policy Evaluation</span>
+          </div>
+          <div class="bar-wrap" data-syllabi='[{"name": "Economic Development Theory and Evidence \u2013 Ferrara & Rodrik \u2013 Fall 2025 \u2013 Harvard University.pdf", "univ": ""}, {"name": "Political Economy and Institutions \u2013 Ferraz \u2013 Spring 2021 \u2013 University of British Columbia.pdf", "univ": ""}]'>
+            <div class="bar-clip">
+              <div class="bar" style="width:33.3%; background:rgb(147,196,224);">
+                <span class="bar-count">2</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="label">
+            <span class="author">Huillery (2009)</span>
+            <span class="title">History Matters: The Long-Term Impact of Colonial Public Investments in French West Africa</span>
+          </div>
+          <div class="bar-wrap" data-syllabi='[{"name": "Political Economy of Development \u2013 Humphreys \u2013 Fall 2018 \u2013 Columbia University.pdf", "univ": ""}, {"name": "The Political Economy of Development \u2013 Blattman & Montero \u2013 Spring 2023 \u2013 University of Chicago.pdf", "univ": ""}]'>
+            <div class="bar-clip">
+              <div class="bar" style="width:33.3%; background:rgb(147,196,224);">
+                <span class="bar-count">2</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="label">
+            <span class="author">Acemoglu (2008)</span>
+            <span class="title">Introduction to Modern Economic Growth</span>
+          </div>
+          <div class="bar-wrap" data-syllabi='[{"name": "Political Economy of Development \u2013 Humphreys \u2013 Fall 2018 \u2013 Columbia University.pdf", "univ": ""}, {"name": "Political Economy of Institutions and Development \u2013 Acemoglu & Garcia-Jimeno \u2013 Spring 2017 \u2013 Massachusetts Institute of Technology.pdf", "univ": ""}]'>
+            <div class="bar-clip">
+              <div class="bar" style="width:33.3%; background:rgb(147,196,224);">
+                <span class="bar-count">2</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="label">
+            <span class="author">Avis et al. (2018)</span>
+            <span class="title">Do Government Audits Reduce Corruption? Estimating the Impacts of Exposing Corrupt Politicians</span>
+          </div>
+          <div class="bar-wrap" data-syllabi='[{"name": "Political Economy and Institutions \u2013 Ferraz \u2013 Spring 2021 \u2013 University of British Columbia.pdf", "univ": ""}, {"name": "Political Economy of Institutions and Development \u2013 Acemoglu & Garcia-Jimeno \u2013 Spring 2017 \u2013 Massachusetts Institute of Technology.pdf", "univ": ""}]'>
+            <div class="bar-clip">
+              <div class="bar" style="width:33.3%; background:rgb(147,196,224);">
+                <span class="bar-count">2</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="label">
+            <span class="author">Burgess et al. (2015)</span>
+            <span class="title">The Value of Democracy: Evidence From Road Building in Kenya</span>
+          </div>
+          <div class="bar-wrap" data-syllabi='[{"name": "Political Economy and Institutions \u2013 Ferraz \u2013 Spring 2021 \u2013 University of British Columbia.pdf", "univ": ""}, {"name": "The Political Economy of Development \u2013 Blattman & Montero \u2013 Spring 2023 \u2013 University of Chicago.pdf", "univ": ""}]'>
+            <div class="bar-clip">
+              <div class="bar" style="width:33.3%; background:rgb(147,196,224);">
+                <span class="bar-count">2</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="label">
+            <span class="author">Fisman et al. (2013)</span>
+            <span class="title">Private Returns to Public Office</span>
+          </div>
+          <div class="bar-wrap" data-syllabi='[{"name": "Political Economy and Institutions \u2013 Ferraz \u2013 Spring 2021 \u2013 University of British Columbia.pdf", "univ": ""}, {"name": "Political Economy of Institutions and Development \u2013 Acemoglu & Garcia-Jimeno \u2013 Spring 2017 \u2013 Massachusetts Institute of Technology.pdf", "univ": ""}]'>
+            <div class="bar-clip">
+              <div class="bar" style="width:33.3%; background:rgb(147,196,224);">
+                <span class="bar-count">2</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="label">
+            <span class="author">Bandiera et al. (2009)</span>
+            <span class="title">Active and Passive Waste in Government Spending: Evidence From a Policy Experiment</span>
+          </div>
+          <div class="bar-wrap" data-syllabi='[{"name": "Political Economy and Institutions \u2013 Ferraz \u2013 Spring 2021 \u2013 University of British Columbia.pdf", "univ": ""}, {"name": "The Political Economy of Development \u2013 Blattman & Montero \u2013 Spring 2023 \u2013 University of Chicago.pdf", "univ": ""}]'>
+            <div class="bar-clip">
+              <div class="bar" style="width:33.3%; background:rgb(147,196,224);">
+                <span class="bar-count">2</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="label">
+            <span class="author">Brown (2020)</span>
+            <span class="title">Market Structure and Extortion: Evidence From 50,000 Extortion Payments</span>
+          </div>
+          <div class="bar-wrap" data-syllabi='[{"name": "Political Economy and Institutions \u2013 Ferraz \u2013 Spring 2021 \u2013 University of British Columbia.pdf", "univ": ""}, {"name": "The Political Economy of Development \u2013 Blattman & Montero \u2013 Spring 2023 \u2013 University of Chicago.pdf", "univ": ""}]'>
+            <div class="bar-clip">
+              <div class="bar" style="width:33.3%; background:rgb(147,196,224);">
+                <span class="bar-count">2</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="label">
+            <span class="author">Melnikov et al. (2020)</span>
+            <span class="title">Gangs, Labor Mobility, and Development</span>
+          </div>
+          <div class="bar-wrap" data-syllabi='[{"name": "Political Economy and Institutions \u2013 Ferraz \u2013 Spring 2021 \u2013 University of British Columbia.pdf", "univ": ""}, {"name": "The Political Economy of Development \u2013 Blattman & Montero \u2013 Spring 2023 \u2013 University of Chicago.pdf", "univ": ""}]'>
+            <div class="bar-clip">
+              <div class="bar" style="width:33.3%; background:rgb(147,196,224);">
+                <span class="bar-count">2</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="label">
+            <span class="author">Dimico et al. (2017)</span>
+            <span class="title">Origins of the Sicilian Mafia: The Market for Lemons</span>
+          </div>
+          <div class="bar-wrap" data-syllabi='[{"name": "Political Economy and Institutions \u2013 Ferraz \u2013 Spring 2021 \u2013 University of British Columbia.pdf", "univ": ""}, {"name": "The Political Economy of Development \u2013 Blattman & Montero \u2013 Spring 2023 \u2013 University of Chicago.pdf", "univ": ""}]'>
+            <div class="bar-clip">
+              <div class="bar" style="width:33.3%; background:rgb(147,196,224);">
+                <span class="bar-count">2</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="label">
+            <span class="author">De Feo & De Luca (2017)</span>
+            <span class="title">Mafia in the Ballot Box</span>
+          </div>
+          <div class="bar-wrap" data-syllabi='[{"name": "Political Economy and Institutions \u2013 Ferraz \u2013 Spring 2021 \u2013 University of British Columbia.pdf", "univ": ""}, {"name": "The Political Economy of Development \u2013 Blattman & Montero \u2013 Spring 2023 \u2013 University of Chicago.pdf", "univ": ""}]'>
+            <div class="bar-clip">
+              <div class="bar" style="width:33.3%; background:rgb(147,196,224);">
+                <span class="bar-count">2</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="label">
+            <span class="author">Lizzeri & Persico (2005)</span>
+            <span class="title">A Drawback of Electoral Competition</span>
+          </div>
+          <div class="bar-wrap" data-syllabi='[{"name": "Political Economy and Institutions \u2013 Ferraz \u2013 Spring 2021 \u2013 University of British Columbia.pdf", "univ": ""}, {"name": "Political Economy of Institutions and Development \u2013 Acemoglu & Garcia-Jimeno \u2013 Spring 2017 \u2013 Massachusetts Institute of Technology.pdf", "univ": ""}]'>
+            <div class="bar-clip">
+              <div class="bar" style="width:33.3%; background:rgb(147,196,224);">
+                <span class="bar-count">2</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="label">
+            <span class="author">Colonnelli et al. (2020)</span>
+            <span class="title">Patronage and Selection in Public Sector Organizations</span>
+          </div>
+          <div class="bar-wrap" data-syllabi='[{"name": "Political Economy and Institutions \u2013 Ferraz \u2013 Spring 2021 \u2013 University of British Columbia.pdf", "univ": ""}, {"name": "State Capacity \u2013 Martinez \u2013 Spring 2025 \u2013 Emory University.pdf", "univ": ""}]'>
+            <div class="bar-clip">
+              <div class="bar" style="width:33.3%; background:rgb(147,196,224);">
+                <span class="bar-count">2</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="label">
+            <span class="author">Baland & Robinson (2008)</span>
+            <span class="title">Land and Power: Theory and Evidence From Chile</span>
+          </div>
+          <div class="bar-wrap" data-syllabi='[{"name": "Political Economy and Institutions \u2013 Ferraz \u2013 Spring 2021 \u2013 University of British Columbia.pdf", "univ": ""}, {"name": "Political Economy of Institutions and Development \u2013 Acemoglu & Garcia-Jimeno \u2013 Spring 2017 \u2013 Massachusetts Institute of Technology.pdf", "univ": ""}]'>
+            <div class="bar-clip">
+              <div class="bar" style="width:33.3%; background:rgb(147,196,224);">
+                <span class="bar-count">2</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="label">
+            <span class="author">Besley & Burgess (2002)</span>
+            <span class="title">The Political Economy of Government Responsiveness: Theory and Evidence From India</span>
+          </div>
+          <div class="bar-wrap" data-syllabi='[{"name": "Political Economy and Institutions \u2013 Ferraz \u2013 Spring 2021 \u2013 University of British Columbia.pdf", "univ": ""}, {"name": "Political Economy of Development \u2013 Humphreys \u2013 Fall 2018 \u2013 Columbia University.pdf", "univ": ""}]'>
+            <div class="bar-clip">
+              <div class="bar" style="width:33.3%; background:rgb(147,196,224);">
+                <span class="bar-count">2</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="label">
+            <span class="author">Bicchieri (2016)</span>
+            <span class="title">Norms in the Wild: How to Diagnose, Measure, and Change Social Norms</span>
+          </div>
+          <div class="bar-wrap" data-syllabi='[{"name": "The Political Underpinnings of Prosperity and Poverty \u2013 Fergusson & Querub\u00edn & Robinson \u2013 Summer 2020 \u2013 Universidad de los Andes.pdf", "univ": ""}, {"name": "Topics in Political Economy \u2013 Fergusson & Xefteris \u2013 Fall \u2013 Universitat de Barcelona.pdf", "univ": ""}]'>
+            <div class="bar-clip">
+              <div class="bar" style="width:33.3%; background:rgb(147,196,224);">
+                <span class="bar-count">2</span>
+              </div>
+            </div>
+          </div>
+        </div>
+    </div>
+
+    <footer>Generated from literature_from_selected_syllabi.xlsx</footer>
+  </div>
+  <script>
+    document.querySelectorAll('.bar-wrap[data-syllabi]').forEach(wrap => {
+      const syllabi = JSON.parse(wrap.dataset.syllabi);
+      if (!syllabi.length) return;
+      const tip = document.createElement('div');
+      tip.className = 'tooltip';
+      tip.innerHTML = '<ul>' + syllabi.map(s =>
+        `<li>${s.name}${s.univ ? `<span class="syllabus-univ">${s.univ}</span>` : ''}</li>`
+      ).join('') + '</ul>';
+      wrap.appendChild(tip);
+    });
+  </script>
+</body>
+</html>
