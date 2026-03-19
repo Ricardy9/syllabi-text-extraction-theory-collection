@@ -1,0 +1,70 @@
+<mxfile host="app.diagrams.net" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36" version="26.1.1">
+  <diagram name="Page-1" id="Fhhl85OlAFd0VnNuXXyD">
+    <mxGraphModel dx="1434" dy="772" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="1aTsFk_iCpDcT3qaHEJ4-2" value="" style="endArrow=classic;html=1;rounded=0;exitX=1.038;exitY=0.58;exitDx=0;exitDy=0;exitPerimeter=0;" edge="1" parent="1" source="1aTsFk_iCpDcT3qaHEJ4-3">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="150" y="270" as="sourcePoint" />
+            <mxPoint x="130" y="268" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="1aTsFk_iCpDcT3qaHEJ4-3" value="Syllabus PDFs" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;darkOpacity=0.05;" vertex="1" parent="1">
+          <mxGeometry x="20" y="210" width="80" height="100" as="geometry" />
+        </mxCell>
+        <mxCell id="1aTsFk_iCpDcT3qaHEJ4-10" value="Metadata Extraction&lt;br&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;- Python regex&lt;/div&gt;&lt;div&gt;- Pandas&lt;/div&gt;&lt;div&gt;- Claude / OpenAI API&amp;nbsp;&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;absoluteArcSize=1;arcSize=14;strokeWidth=2;" vertex="1" parent="1">
+          <mxGeometry x="310" y="110" width="130" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="1aTsFk_iCpDcT3qaHEJ4-11" value="&lt;div&gt;Text extraction&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;- pdfplumber&lt;/div&gt;&lt;div&gt;- PyMuPDF&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;absoluteArcSize=1;arcSize=14;strokeWidth=2;" vertex="1" parent="1">
+          <mxGeometry x="130" y="210" width="110" height="110" as="geometry" />
+        </mxCell>
+        <mxCell id="1aTsFk_iCpDcT3qaHEJ4-13" value="&lt;div&gt;Cleaning &amp;amp; Enrichment&lt;br&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;- Python regex&lt;/div&gt;&lt;div&gt;- Pandas&lt;/div&gt;&lt;div&gt;- Claude / OpenAI API&amp;nbsp;&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;absoluteArcSize=1;arcSize=14;strokeWidth=2;" vertex="1" parent="1">
+          <mxGeometry x="530" y="200" width="120" height="130" as="geometry" />
+        </mxCell>
+        <mxCell id="1aTsFk_iCpDcT3qaHEJ4-14" value="Clean outputs&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;- xlsxwriter&lt;/div&gt;&lt;div&gt;- Openpyxl&lt;/div&gt;&lt;div&gt;- JSON, HTML&amp;nbsp;&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;" style="whiteSpace=wrap;html=1;aspect=fixed;" vertex="1" parent="1">
+          <mxGeometry x="700" y="210" width="130" height="130" as="geometry" />
+        </mxCell>
+        <mxCell id="1aTsFk_iCpDcT3qaHEJ4-16" value="" style="endArrow=classic;html=1;rounded=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;" edge="1" parent="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="650" y="274.5" as="sourcePoint" />
+            <mxPoint x="700" y="275" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="1aTsFk_iCpDcT3qaHEJ4-18" value="Metadata &amp;amp; Reading Extraction&lt;br&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;- Python regex&lt;/div&gt;&lt;div&gt;- Pandas&lt;/div&gt;&lt;div&gt;- Claude / OpenAI API&amp;nbsp;&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;absoluteArcSize=1;arcSize=14;strokeWidth=2;" vertex="1" parent="1">
+          <mxGeometry x="310" y="280" width="130" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="1aTsFk_iCpDcT3qaHEJ4-21" value="" style="shape=partialRectangle;whiteSpace=wrap;html=1;bottom=1;right=1;left=1;top=0;fillColor=none;routingCenterX=-0.5;rotation=90;" vertex="1" parent="1">
+          <mxGeometry x="235" y="245" width="120" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="1aTsFk_iCpDcT3qaHEJ4-24" value="" style="endArrow=none;html=1;rounded=0;entryX=0.583;entryY=1.1;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="1" target="1aTsFk_iCpDcT3qaHEJ4-21">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="240" y="270" as="sourcePoint" />
+            <mxPoint x="290" y="220" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="1aTsFk_iCpDcT3qaHEJ4-27" value="" style="endArrow=classic;html=1;rounded=0;" edge="1" parent="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="290" y="320" as="sourcePoint" />
+            <mxPoint x="310" y="320" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="1aTsFk_iCpDcT3qaHEJ4-29" value="" style="endArrow=classic;html=1;rounded=0;" edge="1" parent="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="290" y="200" as="sourcePoint" />
+            <mxPoint x="310" y="200" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="1aTsFk_iCpDcT3qaHEJ4-30" value="" style="shape=partialRectangle;whiteSpace=wrap;html=1;bottom=1;right=1;left=1;top=0;fillColor=none;routingCenterX=-0.5;rotation=-90;" vertex="1" parent="1">
+          <mxGeometry x="382.5" y="242.5" width="150" height="35" as="geometry" />
+        </mxCell>
+        <mxCell id="1aTsFk_iCpDcT3qaHEJ4-33" value="" style="endArrow=classic;html=1;rounded=0;entryX=0.031;entryY=0.454;entryDx=0;entryDy=0;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryPerimeter=0;" edge="1" parent="1" source="1aTsFk_iCpDcT3qaHEJ4-30" target="1aTsFk_iCpDcT3qaHEJ4-13">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="480" y="260" as="sourcePoint" />
+            <mxPoint x="530" y="210" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
