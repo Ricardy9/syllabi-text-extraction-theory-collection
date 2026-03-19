@@ -31,6 +31,7 @@ client = anthropic.Anthropic(api_key=ANTHROPIC_API_KEY)
 
 CURRENT_YEAR = 2026
 
+
 def load_aggregated_papers() -> Dict[str, Dict]:
     """Load the aggregated papers data."""
     with open('aggregated_papers.json', 'r', encoding='utf-8') as f:
